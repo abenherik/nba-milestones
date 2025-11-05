@@ -9,7 +9,7 @@ import {
 } from '../../../../lib/nba-api';
 
 export const dynamic = 'force-dynamic';
-export const maxDuration = 300; // 5 minutes - requires Vercel Pro plan
+// maxDuration removed - causes build issues on Vercel Hobby plan
 
 /**
  * This endpoint updates stats for all active players.
