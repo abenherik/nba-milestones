@@ -1,0 +1,72 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "Vercel logo":
+        - /url: /home
+        - button "Vercel Logo":
+          - img "Vercel Logo"
+      - navigation [ref=e4]:
+        - navigation [ref=e5]:
+          - link "Sign Up" [ref=e6] [cursor=pointer]:
+            - /url: /signup?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fnba-milestones-20250822-123137-21b6egkyz-abenheriks-projects.vercel.app%252F%26nonce%3Dde62c835da3b30867492180c68bd5468cfaffa1eb3dfd52cbdff6b98f93b726c
+            - paragraph [ref=e8] [cursor=pointer]: Sign Up
+    - main [ref=e9]:
+      - generic [ref=e10]:
+        - heading "Log in to Vercel" [level=1] [ref=e13]
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - textbox "Email Address" [ref=e17]
+            - button "Continue with Email" [ref=e19] [cursor=pointer]:
+              - generic [ref=e20] [cursor=pointer]: Continue with Email
+          - generic [ref=e21]:
+            - button "Continue with Google" [ref=e22] [cursor=pointer]:
+              - img [ref=e24] [cursor=pointer]
+              - generic [ref=e30] [cursor=pointer]: Continue with Google
+            - button "Continue with GitHub" [ref=e31] [cursor=pointer]:
+              - img [ref=e33] [cursor=pointer]
+              - generic [ref=e37] [cursor=pointer]: Continue with GitHub
+            - button "Continue with SAML SSO" [ref=e39] [cursor=pointer]:
+              - img [ref=e41] [cursor=pointer]
+              - generic [ref=e43] [cursor=pointer]: Continue with SAML SSO
+            - button "Continue with Passkey" [ref=e44] [cursor=pointer]:
+              - img [ref=e46] [cursor=pointer]
+              - generic [ref=e48] [cursor=pointer]: Continue with Passkey
+            - button "Show other options" [ref=e49] [cursor=pointer]:
+              - generic [ref=e50] [cursor=pointer]: Show other options
+        - paragraph [ref=e51]:
+          - text: Don't have an account?
+          - link "Sign Up" [ref=e52] [cursor=pointer]:
+            - /url: /signup?next=%2Fsso-api%3Furl%3Dhttps%3A%2F%2Fnba-milestones-20250822-123137-21b6egkyz-abenheriks-projects.vercel.app%2F%26nonce%3Dde62c835da3b30867492180c68bd5468cfaffa1eb3dfd52cbdff6b98f93b726c
+      - generic [ref=e55]:
+        - link "Terms" [ref=e56] [cursor=pointer]:
+          - /url: /legal/terms
+        - link "Privacy Policy" [ref=e57] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+  - alert [ref=e58]
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - img
+  - iframe [active] [ref=e60]:
+    - dialog "Log ind med Google" [active] [ref=f1e4]:
+      - generic [ref=f1e5]:
+        - generic [ref=f1e6]:
+          - img [ref=f1e8]
+          - heading "Log ind med Google" [level=1] [ref=f1e13]:
+            - generic [ref=f1e14]: Log ind med Google
+        - button "Luk" [ref=f1e15]:
+          - img [ref=f1e16]
+      - generic [ref=f1e18]:
+        - generic [ref=f1e19]:
+          - paragraph [ref=f1e20]: Log ind på Vercel med din Google-konto
+          - paragraph [ref=f1e21]: Du behøver ikke længere at huske dine adgangskoder. Det er hurtigt, nemt og sikkert at logge ind.
+          - img [ref=f1e23]
+        - button "Fortsæt" [ref=f1e55] [cursor=pointer]:
+          - generic [ref=f1e57] [cursor=pointer]: Fortsæt
+```

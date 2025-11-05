@@ -1,0 +1,27 @@
+# Exclude large files from Vercel deployment
+data/
+docs/chat/
+*.sqlite
+*.db
+*.sql
+export.sql
+*.log
+node_modules/
+.next/
+.env.local
+.git/
+
+# Exclude backup and temp files
+**/backup_*
+**/*.bak
+**/*.tmp
+
+# Exclude development files
+scripts/
+**/*.md
+!README.md
+
+# Exclude test files
+tests/
+**/*.test.*
+**/*.spec.*

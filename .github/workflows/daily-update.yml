@@ -1,0 +1,58 @@
+name: Daily Active Player Stats Update
+
+on:
+  # Run every day at 6:00 AM UTC (after most NBA games finish)
+  schedule:
+    - cron: '0 6 * * *'
+  
+  # Allow manual triggering from GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Update Active Player Stats
+        run: |
+          echo "Triggering daily stats update..."
+          
+          # Call the update endpoint with authentication
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.VERCEL_APP_URL }}/api/cron/update-active-players" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+          
+          # Extract HTTP status code (last line)
+          http_code=$(echo "$response" | tail -n1)
+          
+          # Extract response body (everything except last line)
+          body=$(echo "$response" | sed '$d')
+          
+          echo "Response status: $http_code"
+          echo "Response body: $body"
+          
+          # Pretty print JSON response if available
+          if command -v jq &> /dev/null; then
+            echo "$body" | jq '.' || echo "$body"
+          else
+            echo "$body"
+          fi
+          
+          # Check if request was successful
+          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+            echo "✅ Update completed successfully!"
+          else
+            echo "❌ Update failed with status code: $http_code"
+            exit 1
+          fi
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Daily Stats Update Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time**: $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Endpoint**: ${{ secrets.VERCEL_APP_URL }}/api/cron/update-active-players" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the logs above for detailed results." >> $GITHUB_STEP_SUMMARY

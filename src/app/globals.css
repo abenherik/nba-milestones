@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Explicit theming: keep UA aware we support both schemes (meta tag also added) */
+body { @apply bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100; }
+
+input, button { @apply rounded border border-zinc-300 dark:border-zinc-700 px-3 py-2 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100; }
+
+/* Native select fallback (if used later) */
+select, option { color: #111; background:#ffffff; }
+@media (prefers-color-scheme: dark) { select, option { color:#ffffff; background:#070707; } }
+
+/* Prevent some forced-dark heuristics from washing out contents */
+.surface-dropdown { @apply bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100; isolation:isolate; }
+
+/* Utility to hard-force colors if device accessibility/auto invert interferes */
+.force-colors-stable { color-scheme: light dark; forced-color-adjust: none; }
+
+/* Absolute color dropdown (bypass theme heuristics/inversion) */
+.dropdown-absolute { background:#ffffff !important; color:#000000 !important; forced-color-adjust:none; -webkit-text-fill-color:#000000; }
+.dropdown-absolute li { background:transparent !important; color:#000000 !important; -webkit-text-fill-color:#000000; }
+@media (prefers-color-scheme: dark) {
+	.dropdown-absolute { background:#000000 !important; color:#ffffff !important; border-color:#333333 !important; -webkit-text-fill-color:#ffffff; }
+	.dropdown-absolute li { color:#ffffff !important; -webkit-text-fill-color:#ffffff; }
+	.dropdown-absolute li:hover { background:#1e1e1e !important; }
+	.dropdown-absolute li:active { background:#2a2a2a !important; }
+}
+
+/* Explicit dropdown surface utility (used by player suggestions) */
+.surface-dropdown { @apply bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100; }
+
+/* Nav: eliminate mobile hairline/bottom bar (some browsers render a separator with backdrop-blur) */
+header.app-nav { border-bottom:0 !important; box-shadow:none !important; -webkit-box-shadow:none !important; }
+header.app-nav::before, header.app-nav::after { display:none !important; }
+header.app-nav a { text-decoration:none; }
+@media (max-width: 820px) {
+	header.app-nav { border-bottom:0 !important; }
+}

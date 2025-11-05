@@ -1,0 +1,44 @@
+// SQLite database for local dev
+// Note: Player.birthDate is immutable; do not modify once set. If conflict on seed, log mismatch and keep existing.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id         Int       @id @default(autoincrement())
+  externalId String?   @unique
+  name       String
+  isActive   Boolean   @default(true)
+  birthDate  DateTime  // immutable
+  stats      CareerStat[]
+  watchItems WatchlistItem[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model CareerStat {
+  id          Int     @id @default(autoincrement())
+  player      Player  @relation(fields: [playerId], references: [id])
+  playerId    Int
+  season      String  // e.g., 2023-24
+  team        String?
+  points      Int     @default(0)
+  rebounds    Int     @default(0)
+  assists     Int     @default(0)
+  threesMade  Int     @default(0)
+  gamesPlayed Int     @default(0)
+  @@unique([playerId, season])
+}
+
+model WatchlistItem {
+  id        Int      @id @default(autoincrement())
+  player    Player   @relation(fields: [playerId], references: [id])
+  playerId  Int      @unique
+  createdAt DateTime @default(now())
+}

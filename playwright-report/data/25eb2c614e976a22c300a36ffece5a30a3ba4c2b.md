@@ -1,0 +1,56 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "Vercel logo":
+        - /url: /home
+        - button "Vercel Logo":
+          - img "Vercel Logo"
+      - navigation [ref=e4]:
+        - navigation [ref=e5]:
+          - link "Sign Up" [ref=e6] [cursor=pointer]:
+            - /url: /signup?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fnba-milestones-20250822-123137-21b6egkyz-abenheriks-projects.vercel.app%252F%26nonce%3D31a75efd2cdb22d5d47c625ffdf50ba47e3271263b931f3d1a2fead4f9bc1c80
+            - paragraph [ref=e8] [cursor=pointer]: Sign Up
+    - main [ref=e9]:
+      - generic [ref=e10]:
+        - heading "Log in to Vercel" [level=1] [ref=e13]
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - textbox "Email Address" [ref=e17]
+            - button "Continue with Email" [ref=e19] [cursor=pointer]:
+              - generic [ref=e20] [cursor=pointer]: Continue with Email
+          - generic [ref=e21]:
+            - button "Continue with Google" [ref=e22] [cursor=pointer]:
+              - img [ref=e24] [cursor=pointer]
+              - generic [ref=e30] [cursor=pointer]: Continue with Google
+            - button "Continue with GitHub" [ref=e31] [cursor=pointer]:
+              - img [ref=e33] [cursor=pointer]
+              - generic [ref=e37] [cursor=pointer]: Continue with GitHub
+            - button "Continue with SAML SSO" [ref=e39] [cursor=pointer]:
+              - img [ref=e41] [cursor=pointer]
+              - generic [ref=e43] [cursor=pointer]: Continue with SAML SSO
+            - button "Continue with Passkey" [ref=e44] [cursor=pointer]:
+              - img [ref=e46] [cursor=pointer]
+              - generic [ref=e48] [cursor=pointer]: Continue with Passkey
+            - button "Show other options" [ref=e49] [cursor=pointer]:
+              - generic [ref=e50] [cursor=pointer]: Show other options
+        - paragraph [ref=e51]:
+          - text: Don't have an account?
+          - link "Sign Up" [ref=e52] [cursor=pointer]:
+            - /url: /signup?next=%2Fsso-api%3Furl%3Dhttps%3A%2F%2Fnba-milestones-20250822-123137-21b6egkyz-abenheriks-projects.vercel.app%2F%26nonce%3D31a75efd2cdb22d5d47c625ffdf50ba47e3271263b931f3d1a2fead4f9bc1c80
+      - generic [ref=e55]:
+        - link "Terms" [ref=e56] [cursor=pointer]:
+          - /url: /legal/terms
+        - link "Privacy Policy" [ref=e57] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+  - alert [ref=e58]
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - img
+```
