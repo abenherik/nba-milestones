@@ -8,3 +8,8 @@ out/
 credentials/
 *.json
 .vercel
+
+# Large database files - these should not be in Git
+data/app.sqlite
+*.sql
+export*.sql
