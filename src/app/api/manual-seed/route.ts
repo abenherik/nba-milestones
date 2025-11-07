@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { openSqlite, ensureCoreSchema, dbAll, dbRun } from '../../../lib/sqlite';
+import { openSqlite, ensureCoreSchema, dbAll, dbRun } from '@/lib/sqlite';
 
 export const dynamic = 'force-dynamic';
 

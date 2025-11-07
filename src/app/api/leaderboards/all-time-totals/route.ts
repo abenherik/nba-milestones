@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getTotalsSqlite, Metric, Source } from '../../../../lib/leaderboards/totalsSqlite';
-import { openSqlite, ensureCoreSchema, dbAll, dbRun } from '../../../../lib/sqlite';
+import { getTotalsSqlite, Metric, Source } from '@/lib/leaderboards/totalsSqlite';
+import { openSqlite, ensureCoreSchema, dbAll, dbRun } from '@/lib/sqlite';
 
 export const dynamic = 'force-dynamic';
 

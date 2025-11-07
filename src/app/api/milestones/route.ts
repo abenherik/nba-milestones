@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { openDatabase, dbAll, closeDatabase, type DatabaseConnection } from '../../../lib/database';
-import { getBeforeAgeSqlite, type Metric } from '../../../lib/leaderboards/beforeAgeSqlite';
-import { getMilestoneGamesBeforeAge, type MilestoneQuery } from '../../../lib/leaderboards/milestoneGames';
-import { currentSlicesVersion, presetKey, readSlicesTop25Batch, writeSliceTop25, type SeasonGroup } from '../../../lib/slices';
-import { perfMonitor, timeQuery } from '../../../lib/performance';
+import { openDatabase, dbAll, closeDatabase, type DatabaseConnection } from '@/lib/database';
+import { getBeforeAgeSqlite, type Metric } from '@/lib/leaderboards/beforeAgeSqlite';
+import { getMilestoneGamesBeforeAge, type MilestoneQuery } from '@/lib/leaderboards/milestoneGames';
+import { currentSlicesVersion, presetKey, readSlicesTop25Batch, writeSliceTop25, type SeasonGroup } from '@/lib/slices';
+import { perfMonitor, timeQuery } from '@/lib/performance';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';

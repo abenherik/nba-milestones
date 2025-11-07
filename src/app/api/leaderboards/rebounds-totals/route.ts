@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getTotalsSqlite } from '../../../../lib/leaderboards/totalsSqlite';
+import { getTotalsSqlite } from '@/lib/leaderboards/totalsSqlite';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

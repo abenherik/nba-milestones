@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { openDatabase, dbAll, dbRun, closeDatabase, setForcePrimaryReads } from '../../../lib/database';
-import { perfMonitor, timeQuery } from '../../../lib/performance';
-import { withCacheHeaders } from '../../../lib/caching';
+import { openDatabase, dbAll, dbRun, closeDatabase, setForcePrimaryReads } from '@/lib/database';
+import { perfMonitor, timeQuery } from '@/lib/performance';
+import { withCacheHeaders } from '@/lib/caching';
 // zod removed; request bodies validated minimally in handlers
 
 // Force dynamic rendering to avoid caching issues with Turso edge database

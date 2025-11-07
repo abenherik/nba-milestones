@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { openDatabase, dbAll, dbRun, closeDatabase } from '../../../../lib/database';
-import { 
-  fetchPlayerGameLog, 
-  getCurrentSeason, 
+import { openDatabase, dbAll, dbRun, closeDatabase } from '@/lib/database';
+import {
+  fetchPlayerGameLog,
+  getCurrentSeason,
   calculateAgeAtGame,
   type SeasonType,
   type NBAGameLog
-} from '../../../../lib/nba-api';
+} from '@/lib/nba-api';
 
 export const dynamic = 'force-dynamic';
 // maxDuration removed - causes build issues on Vercel Hobby plan

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBeforeAgeSqlite } from '../../../../lib/leaderboards/beforeAgeSqlite';
+import { getBeforeAgeSqlite } from '@/lib/leaderboards/beforeAgeSqlite';
 
 export async function GET(req: NextRequest) {
   try {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBeforeAgeSqlite } from '../../../../lib/leaderboards/beforeAgeSqlite';
-import { openSqlite, ensureCoreSchema, dbAll, dbRun } from '../../../../lib/sqlite';
+import { getBeforeAgeSqlite } from '@/lib/leaderboards/beforeAgeSqlite';
+import { openSqlite, ensureCoreSchema, dbAll, dbRun } from '@/lib/sqlite';
 
 export const dynamic = 'force-dynamic';
 

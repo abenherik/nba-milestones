@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { openDatabase, dbAll, dbRun, closeDatabase, ensureCoreSchema } from '../../../lib/database';
+import { openDatabase, dbAll, dbRun, closeDatabase, ensureCoreSchema } from '@/lib/database';
 
 export const dynamic = 'force-dynamic';
 
