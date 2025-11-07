@@ -16,7 +16,7 @@ function sleep(ms: number) {
   return new Promise(res => setTimeout(res, ms));
 }
 
-async function fetchJson(url: string, timeoutMs = 12000, retries = 4, retryDelayMs = 1000) {
+async function fetchJson(url: string, timeoutMs = 8000, retries = 2, retryDelayMs = 500) {
   let lastErr: unknown;
   for (let attempt = 0; attempt <= retries; attempt++) {
     const ctrl = new AbortController();

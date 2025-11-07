@@ -135,7 +135,7 @@ export async function POST(req: NextRequest) {
     
     // Parse batch parameters from request body
     const body = await req.json().catch(() => ({}));
-    const batchSize = body.batchSize || 5; // Process 5 players per request by default
+    const batchSize = body.batchSize || 1; // Process 1 player per request by default (for Vercel 10s timeout)
     const offset = body.offset || 0; // Start from beginning by default
     
     // Get current season
@@ -197,8 +197,7 @@ export async function POST(req: NextRequest) {
           errors: stats.errors
         });
         
-        // Rate limiting: small delay between players
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // No delay needed - batch size is 1 player per request
       } catch (err) {
         console.error(`[Cron] Failed to update player ${player.full_name}:`, err);
         results.errors++;
