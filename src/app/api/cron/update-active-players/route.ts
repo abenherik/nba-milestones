@@ -43,12 +43,19 @@ async function updatePlayerGames(
   playerName: string,
   birthdate: string | null,
   season: string,
-  seasonType: SeasonType
-): Promise<{ added: number; skipped: number; errors: number }> {
+  seasonType: SeasonType,
+  maxDurationMs: number = 8000 // Timeout after 8 seconds
+): Promise<{ added: number; skipped: number; errors: number; timedOut?: boolean }> {
   const db = openDatabase();
   
   try {
-    const games = await fetchPlayerGameLog(playerId, season, seasonType);
+    // Set a timeout for the entire operation
+    const timeoutPromise = new Promise<NBAGameLog[]>((_, reject) =>
+      setTimeout(() => reject(new Error('Player update timeout')), maxDurationMs)
+    );
+    
+    const gamesPromise = fetchPlayerGameLog(playerId, season, seasonType);
+    const games = await Promise.race([gamesPromise, timeoutPromise]);
     
     let added = 0;
     let skipped = 0;
@@ -105,6 +112,13 @@ async function updatePlayerGames(
     }
     
     return { added, skipped, errors };
+  } catch (err) {
+    // Check if it was a timeout
+    if (err instanceof Error && err.message === 'Player update timeout') {
+      console.log(`[Timeout] Skipping ${playerName} - took too long`);
+      return { added: 0, skipped: 0, errors: 0, timedOut: true };
+    }
+    throw err;
   } finally {
     await closeDatabase(db);
   }
@@ -175,13 +189,14 @@ export async function POST(req: NextRequest) {
       try {
         console.log(`[Cron] Updating ${player.full_name} (${player.id})...`);
         
-        // Update regular season games
+        // Update regular season games with 8-second timeout
         const stats = await updatePlayerGames(
           player.id,
           player.full_name,
           player.birthdate,
           currentSeason,
-          'Regular Season'
+          'Regular Season',
+          8000
         );
         
         results.playersProcessed++;
@@ -194,7 +209,8 @@ export async function POST(req: NextRequest) {
           name: player.full_name,
           added: stats.added,
           skipped: stats.skipped,
-          errors: stats.errors
+          errors: stats.errors,
+          timedOut: stats.timedOut || false
         });
         
         // No delay needed - batch size is 1 player per request
