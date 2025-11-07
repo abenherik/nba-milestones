@@ -17,35 +17,77 @@ jobs:
         run: |
           echo "Triggering daily stats update..."
           
-          # Call the update endpoint with authentication
-          response=$(curl -s -w "\n%{http_code}" -X POST \
-            "${{ secrets.VERCEL_APP_URL }}/api/cron/update-active-players" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            -H "Content-Type: application/json")
+          BATCH_SIZE=5
+          OFFSET=0
+          HAS_MORE=true
+          TOTAL_ADDED=0
+          TOTAL_SKIPPED=0
+          BATCH_COUNT=0
           
-          # Extract HTTP status code (last line)
-          http_code=$(echo "$response" | tail -n1)
+          while [ "$HAS_MORE" = "true" ]; do
+            BATCH_COUNT=$((BATCH_COUNT + 1))
+            echo ""
+            echo "=== Processing batch $BATCH_COUNT (offset: $OFFSET) ==="
+            
+            # Call the update endpoint with batch parameters
+            response=$(curl -s -w "\n%{http_code}" -X POST \
+              "${{ secrets.VERCEL_APP_URL }}/api/cron/update-active-players" \
+              -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+              -H "Content-Type: application/json" \
+              -d "{\"batchSize\": $BATCH_SIZE, \"offset\": $OFFSET}")
+            
+            # Extract HTTP status code (last line)
+            http_code=$(echo "$response" | tail -n1)
+            
+            # Extract response body (everything except last line)
+            body=$(echo "$response" | sed '$d')
+            
+            echo "Response status: $http_code"
+            
+            # Check if request was successful
+            if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+              # Parse JSON response
+              if command -v jq &> /dev/null; then
+                echo "$body" | jq '.'
+                
+                # Extract values
+                games_added=$(echo "$body" | jq -r '.gamesAdded // 0')
+                games_skipped=$(echo "$body" | jq -r '.gamesSkipped // 0')
+                has_more_value=$(echo "$body" | jq -r '.batch.hasMore // false')
+                
+                TOTAL_ADDED=$((TOTAL_ADDED + games_added))
+                TOTAL_SKIPPED=$((TOTAL_SKIPPED + games_skipped))
+                HAS_MORE="$has_more_value"
+                
+                echo "Batch complete: +$games_added games, $games_skipped skipped"
+              else
+                echo "$body"
+                # Without jq, stop after first batch
+                HAS_MORE=false
+              fi
+              
+              # Move to next batch
+              OFFSET=$((OFFSET + BATCH_SIZE))
+              
+              # Small delay between batches to avoid rate limits
+              if [ "$HAS_MORE" = "true" ]; then
+                echo "Waiting 2 seconds before next batch..."
+                sleep 2
+              fi
+            else
+              echo "❌ Batch failed with status code: $http_code"
+              echo "Response: $body"
+              exit 1
+            fi
+          done
           
-          # Extract response body (everything except last line)
-          body=$(echo "$response" | sed '$d')
-          
-          echo "Response status: $http_code"
-          echo "Response body: $body"
-          
-          # Pretty print JSON response if available
-          if command -v jq &> /dev/null; then
-            echo "$body" | jq '.' || echo "$body"
-          else
-            echo "$body"
-          fi
-          
-          # Check if request was successful
-          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
-            echo "✅ Update completed successfully!"
-          else
-            echo "❌ Update failed with status code: $http_code"
-            exit 1
-          fi
+          echo ""
+          echo "========================================="
+          echo "✅ All batches completed successfully!"
+          echo "Processed $BATCH_COUNT batches"
+          echo "Total games added: $TOTAL_ADDED"
+          echo "Total games skipped: $TOTAL_SKIPPED"
+          echo "========================================="
       
       - name: Summary
         if: always()

@@ -133,18 +133,31 @@ export async function POST(req: NextRequest) {
     const startTime = Date.now();
     console.log('[Cron] Starting active player update...');
     
+    // Parse batch parameters from request body
+    const body = await req.json().catch(() => ({}));
+    const batchSize = body.batchSize || 5; // Process 5 players per request by default
+    const offset = body.offset || 0; // Start from beginning by default
+    
     // Get current season
     const currentSeason = getCurrentSeason();
     console.log(`[Cron] Current season: ${currentSeason}`);
     
     // Get all active players
-    const players = await getActivePlayers();
-    console.log(`[Cron] Found ${players.length} active players`);
+    const allPlayers = await getActivePlayers();
+    console.log(`[Cron] Found ${allPlayers.length} active players total`);
+    
+    // Get batch of players to process
+    const players = allPlayers.slice(offset, offset + batchSize);
+    const hasMore = offset + batchSize < allPlayers.length;
+    
+    console.log(`[Cron] Processing batch: ${offset}-${offset + players.length} of ${allPlayers.length}`);
     
     if (players.length === 0) {
       return NextResponse.json({
         success: true,
-        message: 'No active players to update',
+        message: 'No players in this batch',
+        totalPlayers: allPlayers.length,
+        hasMore: false,
         duration: Date.now() - startTime
       });
     }
@@ -193,11 +206,17 @@ export async function POST(req: NextRequest) {
     }
     
     const duration = Date.now() - startTime;
-    console.log(`[Cron] Completed in ${duration}ms:`, results);
+    console.log(`[Cron] Completed batch in ${duration}ms:`, results);
     
     return NextResponse.json({
       success: true,
       season: currentSeason,
+      batch: {
+        offset,
+        size: players.length,
+        totalPlayers: allPlayers.length,
+        hasMore
+      },
       ...results,
       duration
     });
