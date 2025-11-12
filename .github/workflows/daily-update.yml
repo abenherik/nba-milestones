@@ -13,81 +13,25 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Update Active Player Stats
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
         run: |
-          echo "Triggering daily stats update..."
-          
-          BATCH_SIZE=1
-          OFFSET=0
-          HAS_MORE=true
-          TOTAL_ADDED=0
-          TOTAL_SKIPPED=0
-          BATCH_COUNT=0
-          
-          while [ "$HAS_MORE" = "true" ]; do
-            BATCH_COUNT=$((BATCH_COUNT + 1))
-            echo ""
-            echo "=== Processing batch $BATCH_COUNT (offset: $OFFSET) ==="
-            
-            # Call the update endpoint with batch parameters
-            response=$(curl -s -w "\n%{http_code}" -X POST \
-              "${{ secrets.VERCEL_APP_URL }}/api/cron/update-active-players" \
-              -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-              -H "Content-Type: application/json" \
-              -d "{\"batchSize\": $BATCH_SIZE, \"offset\": $OFFSET}")
-            
-            # Extract HTTP status code (last line)
-            http_code=$(echo "$response" | tail -n1)
-            
-            # Extract response body (everything except last line)
-            body=$(echo "$response" | sed '$d')
-            
-            echo "Response status: $http_code"
-            
-            # Check if request was successful
-            if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
-              # Parse JSON response
-              if command -v jq &> /dev/null; then
-                echo "$body" | jq '.'
-                
-                # Extract values
-                games_added=$(echo "$body" | jq -r '.gamesAdded // 0')
-                games_skipped=$(echo "$body" | jq -r '.gamesSkipped // 0')
-                has_more_value=$(echo "$body" | jq -r '.batch.hasMore // false')
-                
-                TOTAL_ADDED=$((TOTAL_ADDED + games_added))
-                TOTAL_SKIPPED=$((TOTAL_SKIPPED + games_skipped))
-                HAS_MORE="$has_more_value"
-                
-                echo "Batch complete: +$games_added games, $games_skipped skipped"
-              else
-                echo "$body"
-                # Without jq, stop after first batch
-                HAS_MORE=false
-              fi
-              
-              # Move to next batch
-              OFFSET=$((OFFSET + BATCH_SIZE))
-              
-              # Small delay between batches to avoid rate limits
-              if [ "$HAS_MORE" = "true" ]; then
-                echo "Waiting 2 seconds before next batch..."
-                sleep 2
-              fi
-            else
-              echo "❌ Batch failed with status code: $http_code"
-              echo "Response: $body"
-              exit 1
-            fi
-          done
-          
-          echo ""
-          echo "========================================="
-          echo "✅ All batches completed successfully!"
-          echo "Processed $BATCH_COUNT batches"
-          echo "Total games added: $TOTAL_ADDED"
-          echo "Total games skipped: $TOTAL_SKIPPED"
-          echo "========================================="
+          pip install nba_api libsql-experimental
+      
+      - name: Update Active Player Stats
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+        run: |
+          python scripts/update_active_players_nba_api.py
       
       - name: Summary
         if: always()
@@ -95,6 +39,6 @@ jobs:
           echo "## Daily Stats Update Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Time**: $(date -u)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Endpoint**: ${{ secrets.VERCEL_APP_URL }}/api/cron/update-active-players" >> $GITHUB_STEP_SUMMARY
+          echo "- **Method**: Python nba_api (direct to Turso)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Check the logs above for detailed results." >> $GITHUB_STEP_SUMMARY
