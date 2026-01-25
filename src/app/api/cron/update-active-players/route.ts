@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 // Use tsconfig baseUrl+paths alias instead of deep relative traversal
-import { openDatabase, dbAll, dbRun, closeDatabase } from '@/lib/database';
+import { openDatabase, dbAll, dbRun, dbBatch, closeDatabase } from '@/lib/database';
 import {
   fetchPlayerGameLog,
   getCurrentSeason,
@@ -60,54 +60,59 @@ async function updatePlayerGames(
     let added = 0;
     let skipped = 0;
     let errors = 0;
-    
-    for (const game of games) {
+
+    // Fetch existing game_ids for this player+season once (avoids per-game SELECTs).
+    const existingRows = await dbAll<{ game_id: string }>(
+      db,
+      `SELECT game_id FROM game_summary WHERE player_id = ? AND season = ?`,
+      [playerId, season]
+    );
+    const existingIds = new Set(existingRows.map(r => String(r.game_id)));
+
+    const toInsert = games.filter(g => !existingIds.has(String(g.Game_ID)));
+    skipped = Math.max(0, games.length - toInsert.length);
+
+    const statements = toInsert.map(game => {
+      const ageAtGame = birthdate && game.GAME_DATE
+        ? calculateAgeAtGame(birthdate, game.GAME_DATE)
+        : null;
+      return {
+        sql: `INSERT INTO game_summary (
+          player_id, player_name, game_id, game_date, season, season_type,
+          points, rebounds, assists, blocks, steals, age_at_game_years
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        params: [
+          playerId,
+          playerName,
+          game.Game_ID,
+          game.GAME_DATE,
+          season,
+          'Regular Season',
+          game.PTS ?? 0,
+          game.REB ?? 0,
+          game.AST ?? 0,
+          game.BLK ?? 0,
+          game.STL ?? 0,
+          ageAtGame,
+        ],
+      };
+    });
+
+    if (statements.length) {
       try {
-        // Check if game already exists
-        const existing = await dbAll(
-          db,
-          'SELECT 1 FROM game_summary WHERE player_id = ? AND game_id = ? LIMIT 1',
-          [playerId, game.Game_ID]
-        );
-        
-        if (existing.length > 0) {
-          skipped++;
-          continue;
-        }
-        
-        // Calculate age if birthdate available
-        const ageAtGame = birthdate && game.GAME_DATE 
-          ? calculateAgeAtGame(birthdate, game.GAME_DATE)
-          : null;
-        
-        // Insert new game
-        // CRITICAL: Always set season_type='Regular Season' for consistency
-        await dbRun(
-          db,
-          `INSERT INTO game_summary (
-            player_id, player_name, game_id, game_date, season, season_type,
-            points, rebounds, assists, blocks, steals, age_at_game_years
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            playerId,
-            playerName,
-            game.Game_ID,
-            game.GAME_DATE,
-            season,
-            'Regular Season', // Always use 'Regular Season' as per project requirements
-            game.PTS ?? 0,
-            game.REB ?? 0,
-            game.AST ?? 0,
-            game.BLK ?? 0,
-            game.STL ?? 0,
-            ageAtGame
-          ]
-        );
-        
-        added++;
+        await dbBatch(db, statements);
+        added = statements.length;
       } catch (err) {
-        console.error(`Error inserting game ${game.Game_ID} for player ${playerId}:`, err);
-        errors++;
+        // Fallback: do sequential inserts to isolate errors.
+        console.error(`[Cron] Batch insert failed for ${playerName} (${playerId}); falling back to sequential inserts`, err);
+        for (const s of statements) {
+          try {
+            await dbRun(db, s.sql, s.params ?? []);
+            added++;
+          } catch (e) {
+            errors++;
+          }
+        }
       }
     }
     

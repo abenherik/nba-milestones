@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { openDatabase, dbAll, dbRun, closeDatabase, setForcePrimaryReads } from '@/lib/database';
+import { openDatabase, dbAll, dbExec, dbRun, closeDatabase, setForcePrimaryReads } from '@/lib/database';
 import { perfMonitor, timeQuery } from '@/lib/performance';
 import { withCacheHeaders } from '@/lib/caching';
 // zod removed; request bodies validated minimally in handlers
@@ -18,6 +18,27 @@ function computeAgeFromBirthdate(birthdate?: string | null): number | undefined 
   return age;
 }
 
+function computeDaysUntilNextBirthday(birthdate?: string | null): number | undefined {
+  if (!birthdate) return undefined;
+  const d = new Date(birthdate);
+  if (isNaN(d.getTime())) return undefined;
+  const now = new Date();
+  
+  // Get next birthday
+  const nextBirthday = new Date(now.getFullYear(), d.getMonth(), d.getDate());
+  
+  // If birthday already passed this year, use next year
+  if (nextBirthday < now) {
+    nextBirthday.setFullYear(now.getFullYear() + 1);
+  }
+  
+  // Calculate days difference
+  const diffTime = nextBirthday.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  return diffDays;
+}
+
 // In-memory cache for watchlist data
 let watchlistCache: {
   data: any;
@@ -25,7 +46,7 @@ let watchlistCache: {
   bypassUntil?: number; // Timestamp to bypass cache until (for read-after-write consistency)
 } | null = null;
 
-const CACHE_DURATION = 500; // Very short cache for better consistency
+const CACHE_DURATION = 5000; // 5 seconds cache (increased from 500ms)
 
 export async function GET() {
   return perfMonitor.timeAsync('api:watchlist:GET', async () => {
@@ -70,7 +91,12 @@ export async function GET() {
       const responseData = {
         items: Array.isArray(rows) ? rows.map(r => ({
           playerId: r.player_id != null ? String(r.player_id) : '',
-          player: r.full_name ? { id: r.id ? String(r.id) : '', full_name: r.full_name, age: computeAgeFromBirthdate(r.birthdate) } : undefined,
+          player: r.full_name ? { 
+            id: r.id ? String(r.id) : '', 
+            full_name: r.full_name, 
+            age: computeAgeFromBirthdate(r.birthdate),
+            daysUntilNextBirthday: computeDaysUntilNextBirthday(r.birthdate)
+          } : undefined,
           debug: !r.full_name ? `Missing player for id ${r.player_id}` : undefined
         })) : []
       };
@@ -112,21 +138,16 @@ export async function POST(req: NextRequest) {
     
     const db = openDatabase();
     try {
-      // validate player exists
+      // Validate player exists (cheap 1-row check).
       const exists = await dbAll(db, `SELECT 1 FROM players WHERE id = ? LIMIT 1`, [playerId]);
       if (process.env.DEBUG?.includes('watchlist')) console.log('[POST /api/watchlist] Exists?', playerId, exists.length > 0);
-      
       if (exists.length === 0) {
         return NextResponse.json({ error: 'player not found', debug: playerId }, { status: 404 });
       }
-      
-      const beforeResult = await dbAll<{ count: number }>(db, `SELECT COUNT(*) as count FROM watchlist WHERE player_id = ?`, [playerId]);
-      await dbRun(db, `INSERT OR IGNORE INTO watchlist(player_id) VALUES(?)`, [playerId]);
-      const afterResult = await dbAll<{ count: number }>(db, `SELECT COUNT(*) as count FROM watchlist WHERE player_id = ?`, [playerId]);
-      
-      const beforeCount = Number(beforeResult[0]?.count ?? 0);
-      const afterCount = Number(afterResult[0]?.count ?? 0);
-      const added = afterCount > beforeCount;
+
+      // Single roundtrip write; use rowsAffected to determine if it was newly added.
+      const result = await dbExec(db, `INSERT OR IGNORE INTO watchlist(player_id) VALUES(?)`, [playerId]);
+      const added = result.rowsAffected > 0;
       
       // Completely invalidate cache and force primary database reads
       watchlistCache = null;
@@ -142,7 +163,7 @@ export async function POST(req: NextRequest) {
         console.log(`[POST /api/watchlist] Invalidated cache, forced primary reads, and set 15s bypass after ${added ? 'adding' : 'no change'}`);
       }
       
-      return NextResponse.json({ ok: true, playerId, added, counts: { before: beforeCount, after: afterCount } });
+      return NextResponse.json({ ok: true, playerId, added });
     } catch (error) {
       console.error('[POST /api/watchlist] Error:', error);
       return NextResponse.json({ error: 'Internal error' }, { status: 500 });

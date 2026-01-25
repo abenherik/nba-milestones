@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { openDatabase, dbAll, closeDatabase, type DatabaseConnection } from '@/lib/database';
+import { openDatabase, dbAll, closeDatabase, setForcePrimaryReads, ensureCoreSchemaOnce, type DatabaseConnection } from '@/lib/database';
 import { getBeforeAgeSqlite, type Metric } from '@/lib/leaderboards/beforeAgeSqlite';
 import { getMilestoneGamesBeforeAge, type MilestoneQuery } from '@/lib/leaderboards/milestoneGames';
 import { currentSlicesVersion, presetKey, readSlicesTop25Batch, writeSliceTop25, type SeasonGroup } from '@/lib/slices';
@@ -8,6 +8,35 @@ import { perfMonitor, timeQuery } from '@/lib/performance';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
+
+// Aggressive in-memory cache for milestone responses to reduce DB reads
+type CacheEntry = { data: any; timestamp: number; headers: Record<string, string> };
+const milestonesCache = new Map<string, CacheEntry>();
+const CACHE_TTL = 21600000; // 6 hours cache (allows twice-daily checks)
+const MAX_CACHE_SIZE = 1000; // Limit cache to 1000 entries
+
+function getCacheKey(playerId: string, view: string | undefined, includePlayoffs: boolean, ageCount: number): string {
+  return `${playerId}:${view || 'default'}:${includePlayoffs ? 'pl' : 'rs'}:${ageCount}`;
+}
+
+function cleanupCache() {
+  if (milestonesCache.size > MAX_CACHE_SIZE) {
+    const now = Date.now();
+    // Remove expired entries
+    for (const [key, entry] of milestonesCache.entries()) {
+      if (now - entry.timestamp > CACHE_TTL) {
+        milestonesCache.delete(key);
+      }
+    }
+    // If still too large, remove oldest entries
+    if (milestonesCache.size > MAX_CACHE_SIZE) {
+      const entries = Array.from(milestonesCache.entries())
+        .sort((a, b) => a[1].timestamp - b[1].timestamp);
+      const toRemove = entries.slice(0, milestonesCache.size - MAX_CACHE_SIZE);
+      toRemove.forEach(([key]) => milestonesCache.delete(key));
+    }
+  }
+}
 
 // Simple placeholder computation; refine with real thresholds later
 const ALL_TIME_TOP10 = {
@@ -43,6 +72,37 @@ export async function GET(req: NextRequest) {
   const playerId: string | null = searchParams.get('playerId');
   if (!playerId) return NextResponse.json({ error: 'playerId required' }, { status: 400 });
   
+  // Check if client wants to force primary database read (bypasses replica lag AND cache)
+  const forcePrimary = searchParams.get('forcePrimary') === 'true';
+  
+  const view = searchParams.get('view') || undefined;
+  const includePlayoffsParam = searchParams.get('includePlayoffs');
+  const ageCountParam = searchParams.get('ageCount');
+  const includePlayoffs = includePlayoffsParam === '1' || includePlayoffsParam === 'true';
+  const ageCount = Math.max(1, Math.min(10, Number(ageCountParam ?? 5)));
+  
+  // Check cache first (unless forcePrimary is set)
+  if (!forcePrimary) {
+    const cacheKey = getCacheKey(playerId, view, includePlayoffs, ageCount);
+    const cached = milestonesCache.get(cacheKey);
+    const now = Date.now();
+    
+    if (cached && (now - cached.timestamp < CACHE_TTL)) {
+      // Return cached response with cache headers
+      const response = NextResponse.json(cached.data);
+      Object.entries(cached.headers).forEach(([key, value]) => {
+        response.headers.set(key, value);
+      });
+      response.headers.set('X-Cache', 'HIT');
+      response.headers.set('X-Cache-Age', String(Math.floor((now - cached.timestamp) / 1000)));
+      return response;
+    }
+  }
+  
+  if (forcePrimary) {
+    setForcePrimaryReads(20000); // Force primary reads for 20 seconds
+  }
+  
   return perfMonitor.timeAsync('api:milestones:GET', async () => {
     const t0 = Date.now();
     const view = searchParams.get('view') || undefined;
@@ -77,6 +137,7 @@ export async function GET(req: NextRequest) {
     }
     const db = openDatabase();
     try {
+      await ensureCoreSchemaOnce(db);
       const birthRows = await timeQuery('milestones-birthdate', () => dbAll<{ birthdate: string | null }>(db, `SELECT birthdate FROM players WHERE id = ? LIMIT 1`, [playerId]));
       let currentAge = computeAgeFromBirthdate(birthRows[0]?.birthdate ?? null);
       if (currentAge == null) {
@@ -162,6 +223,9 @@ export async function GET(req: NextRequest) {
         { type: 'points', minPoints: 20 },
         { type: 'points', minPoints: 30 },
         { type: 'points', minPoints: 40 },
+        // Double-doubles and triple-doubles
+        { type: 'doubleDouble' },
+        { type: 'tripleDouble' },
       ];
     }
     // Full preset list for leaderboards view
@@ -198,7 +262,7 @@ export async function GET(req: NextRequest) {
     for (const age of agesToCheck) {
       const mapKey = `${key}|${age}`;
       const rows = groupedAll.get(mapKey) || await (async () => {
-        const data = await getBeforeAgeSqlite(metric, age, includePlayoffs);
+        const data = await getBeforeAgeSqlite(metric, age, includePlayoffs, db);
         const live = data.top25.map((r, i) => ({ rank: i + 1, player_id: r.playerId, player_name: r.player?.full_name ?? r.playerId, value: r.value }));
         await writeSliceTop25(db, sliceVersion, key, seasonGroup, age, live);
         groupedAll.set(mapKey, live);
@@ -228,7 +292,7 @@ export async function GET(req: NextRequest) {
     for (const age of agesToCheck) {
       const mapKey = `${key}|${age}`;
       const rows = groupedAll.get(mapKey) || await (async () => {
-        const data = await getMilestoneGamesBeforeAge(preset, age, includePlayoffs);
+        const data = await getMilestoneGamesBeforeAge(preset, age, includePlayoffs, db);
         const live = data.top25.map((r, i) => ({ rank: i + 1, player_id: r.playerId, player_name: r.playerName, value: r.value }));
         await writeSliceTop25(db, sliceVersion, key, seasonGroup, age, live);
         groupedAll.set(mapKey, live);
@@ -253,6 +317,8 @@ export async function GET(req: NextRequest) {
           if (type === 'combo' && (preset as any).minPoints === 20 && (preset as any).minAssists === 10) return '20+pts 10+ast';
           if (type === 'combo' && (preset as any).minPoints === 30 && (preset as any).minAssists === 10) return '30+pts 10+ast';
           if (type === 'combo' && (preset as any).minPoints === 40 && (preset as any).minAssists === 10) return '40+pts 10+ast';
+          if (type === 'doubleDouble') return 'Double-doubles';
+          if (type === 'tripleDouble') return 'Triple-doubles';
           return 'Milestone';
         })();
         const milestoneLabel = /^[a-z]/.test(baseLabel) ? baseLabel.charAt(0).toUpperCase() + baseLabel.slice(1) : baseLabel;
@@ -272,7 +338,28 @@ export async function GET(req: NextRequest) {
       if (process.env.DEBUG_MILESTONES === '1') {
         console.log(`[api/milestones] player=${playerId} view=${view} ages=${agesToCheck.join(',')} playoffs=${includePlayoffs} inHunt=${inHuntStats.length} ms=${t1 - t0}`);
       }
-      return NextResponse.json({ totals, distances, inHuntStats, ms: t1 - t0 });
+      
+      const responseData = { totals, distances, inHuntStats, ms: t1 - t0 };
+      const response = NextResponse.json(responseData);
+      
+      // Set aggressive cache headers (6 hours allows twice-daily checks)
+      response.headers.set('Cache-Control', 'public, max-age=21600, stale-while-revalidate=43200');
+      response.headers.set('X-Cache', 'MISS');
+      
+      // Store in server-side cache (unless forcePrimary was used)
+      if (!forcePrimary) {
+        const cacheKey = getCacheKey(playerId, view, includePlayoffs, ageCount);
+        milestonesCache.set(cacheKey, {
+          data: responseData,
+          timestamp: Date.now(),
+          headers: {
+            'Cache-Control': 'public, max-age=21600, stale-while-revalidate=43200',
+          }
+        });
+        cleanupCache();
+      }
+      
+      return response;
     } catch (error) {
       console.error('[api/milestones] Error:', error);
       return NextResponse.json({ error: 'Internal error' }, { status: 500 });

@@ -52,6 +52,20 @@ function seasonString(yearStart: number) {
 
 export type SeasonType = 'Regular Season' | 'Playoffs';
 
+export interface NBALeagueGameLogRow {
+  SEASON_ID?: string;
+  PLAYER_ID?: string | number;
+  PLAYER_NAME?: string;
+  GAME_ID?: string;
+  GAME_DATE?: string;
+  PTS?: number;
+  REB?: number;
+  AST?: number;
+  STL?: number;
+  BLK?: number;
+  [key: string]: any;
+}
+
 export interface NBAGameLog {
   SEASON_ID: string;
   Player_ID: string;
@@ -125,6 +139,43 @@ export async function fetchPlayerGameLog(
     ) as NBAGameLog[];
   } catch (err) {
     console.error(`Failed to fetch game logs for player ${playerId}, season ${season}:`, err);
+    return [];
+  }
+}
+
+/**
+ * Fetch league-wide game logs for a season/date range.
+ * This is much more economical than per-player gamelog calls when backfilling recent games.
+ */
+export async function fetchLeagueGameLog(
+  season: string,
+  seasonType: SeasonType = 'Regular Season',
+  dateFrom?: string,
+  dateTo?: string
+): Promise<NBALeagueGameLogRow[]> {
+  const params = new URLSearchParams({
+    Season: season,
+    SeasonType: seasonType,
+    PlayerOrTeam: 'P',
+    Sorter: 'DATE',
+    Direction: 'ASC',
+  });
+  if (dateFrom) params.set('DateFrom', dateFrom);
+  if (dateTo) params.set('DateTo', dateTo);
+
+  const url = `https://stats.nba.com/stats/leaguegamelog?${params.toString()}`;
+
+  try {
+    const json = await fetchJson(url, 12000, 2, 750);
+    const rs = json?.resultSets?.[0] ?? json?.resultSet;
+    if (!rs) return [];
+
+    const headers: string[] = rs.headers ?? [];
+    const rows: any[][] = rs.rowSet ?? [];
+
+    return rows.map(r => Object.fromEntries(headers.map((h, i) => [h, r[i]]))) as NBALeagueGameLogRow[];
+  } catch (err) {
+    console.error(`Failed to fetch league game logs for season ${season}:`, err);
     return [];
   }
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { openDatabase, dbAll, dbRun, closeDatabase, ensureCoreSchema } from '@/lib/database';
+import { openDatabase, dbAll, dbRun, closeDatabase, ensureCoreSchemaOnce } from '@/lib/database';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     const db = openDatabase();
     
     // First ensure schema exists
-    await ensureCoreSchema(db);
+    await ensureCoreSchemaOnce(db);
     
     // Test basic connection and get table info
     const playerCount = await dbAll<{ count: number }>(db, 'SELECT COUNT(*) as count FROM players');

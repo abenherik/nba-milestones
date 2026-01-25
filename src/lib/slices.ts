@@ -37,7 +37,7 @@ export type SliceRow = { rank: number; player_id: string; player_name: string; v
 // Simple in-memory TTL cache for slice rows per process
 type CacheEntry = { rows: SliceRow[]; ts: number };
 const mem = new Map<string, CacheEntry>();
-const ttlMs = Number(process.env.SLICES_MEM_TTL_MS || 30000); // 30s default
+const ttlMs = Number(process.env.SLICES_MEM_TTL_MS || 300000); // 5min default (increased from 30s)
 function cacheKey(version: string, key: string, season: SeasonGroup, age: number) {
   return `${version}|${key}|${season}|${age}`;
 }

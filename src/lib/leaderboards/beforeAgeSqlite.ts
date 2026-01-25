@@ -1,4 +1,4 @@
-import { openSqlite, ensureCoreSchema, dbAll } from "../../lib/sqlite";
+import { openSqlite, ensureCoreSchemaOnce, dbAll, closeDatabase, type SqliteDb } from "../../lib/sqlite";
 
 export type Metric = 'points' | 'rebounds' | 'assists' | 'steals' | 'blocks';
 
@@ -23,16 +23,17 @@ function metricColumn(metric: Metric): string {
   }
 }
 
-export async function getBeforeAgeSqlite(metric: Metric, age: number, includePlayoffs = false): Promise<BeforeAgeData> {
-  const db = openSqlite();
-  await ensureCoreSchema(db);
+export async function getBeforeAgeSqlite(metric: Metric, age: number, includePlayoffs = false, db?: SqliteDb): Promise<BeforeAgeData> {
+  const ownsDb = !db;
+  const dbConn = db ?? openSqlite();
+  await ensureCoreSchemaOnce(dbConn);
   const col = metricColumn(metric);
   const playFilter = includePlayoffs
     ? `season_type IN ('Regular Season','Playoffs')`
     : `season_type = 'Regular Season'`;
 
   type Row = { player_id: string; full_name: string; birthday: string | null; is_active: number | null; value: number };
-  const rows = await dbAll<Row>(db, `
+  const rows = await dbAll<Row>(dbConn, `
     SELECT s.player_id, p.full_name, p.birthdate as birthday, p.is_active, SUM(s.${col}) as value
     FROM game_summary s
     JOIN players p ON p.id = s.player_id
@@ -42,7 +43,7 @@ export async function getBeforeAgeSqlite(metric: Metric, age: number, includePla
     ORDER BY value DESC, p.full_name ASC
     LIMIT 25
   `, [age]);
-  db.close();
+  if (ownsDb) await closeDatabase(dbConn);
 
   return {
     age,

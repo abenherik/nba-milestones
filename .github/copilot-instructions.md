@@ -63,6 +63,12 @@ Production App Access
 	- Vercel handles automatic deployments from main branch
 
 Common Workflow Commands:
+- **Update data (VERIFIED APPROACH)**: Double-click `UPDATE_STATS.bat` or desktop shortcut "Update NBA Stats"
+  - Fetches latest games for all 753 active players from NBA API
+  - Rebuilds leaderboards automatically
+  - Updates production Turso database
+  - Takes ~30-45 minutes, runs unattended
+  - Creates desktop shortcut: Run `powershell -ExecutionPolicy Bypass -File "create_desktop_shortcut.ps1"`
 - Deploy to production: `npm run deploy:vercel` (deploys to Vercel)
 - Deploy preview: `npm run deploy:preview` (creates preview deployment)
 - Local dev (if needed): `npm run dev:lowmem` (connects to Turso, not local SQLite)
@@ -87,6 +93,19 @@ Database Debugging Guidelines (Turso Cloud):
 - CRITICAL: Production data lives in Turso cloud, not local files
 - Database migrations: Use /api/migrate-full endpoint with proper authentication
 
+Database Read Optimization (IMPLEMENTED):
+- Problem: Turso free tier hit 497M/500M read limit (99.4% usage)
+- Solution: Aggressive server-side and browser caching across all API endpoints
+- Milestones API: 6-hour server cache + 6hr browser cache, 12hr stale-while-revalidate
+- Leaderboards: 10-minute browser cache, 30min stale-while-revalidate (doubled from 5min)
+- Slices cache: 5-minute in-memory TTL (increased from 30 seconds, 10x improvement)
+- Watchlist API: 5-second server cache (increased from 500ms, 10x improvement)
+- Players API: 6-hour browser cache with 12hr stale period, eliminated COUNT(*) overhead
+- Cache philosophy: 6-hour caches allow twice-daily checks (evening + morning after update)
+- Expected impact: 80-95% reduction in database reads
+- Details: See CACHE_OPTIMIZATION.md for full breakdown
+- Monitoring: Check X-Cache: HIT/MISS headers on /api/milestones responses
+
 Watchlist Performance Fix (PROVEN SOLUTION):
 - Problem: Turso replica lag causes 20-30 second delays when adding players to watchlist
 - WRONG approach: Trying to fix database consistency with cache invalidation, primary forcing, retry mechanisms
@@ -95,6 +114,14 @@ Watchlist Performance Fix (PROVEN SOLUTION):
 - Key files: src/app/select-players/page.tsx (optimistic storage), src/app/watchlist/page.tsx (optimistic loading)
 - Result: Instant player appearance, progressive milestone loading, excellent user experience
 - Note: User insight was correct - "immediately show the player in the watchlist and then load stats afterwards"
+
+Watchlist Loading Behavior:
+- Players show instantly (optimistic UI from localStorage)
+- Milestones load progressively with 50ms stagger between players (prevents API overload)
+- Visual loading indicator shows "Loading milestones..." while fetching
+- If milestones don't appear immediately after page load, wait 3-5 seconds for progressive loading to complete
+- "Refresh all" button forces immediate fresh fetch of all milestones
+- Fast mobile loading: Reduced stagger delay from 200ms to 50ms for better perceived performance
 
 Critical Fix Details (Complete Optimistic UI):
 - Issue: Players reappeared after removal + page reload due to incomplete removal tracking

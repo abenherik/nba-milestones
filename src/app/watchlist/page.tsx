@@ -16,7 +16,7 @@ type Milestones = {
   distances?: any;
   inHuntStats?: InHuntStat[];
 } | undefined;
-interface WatchItem { playerId: string; player: { full_name?: string; first_name?: string; last_name?: string }; milestones?: Milestones }
+interface WatchItem { playerId: string; player: { full_name?: string; first_name?: string; last_name?: string; age?: number; daysUntilNextBirthday?: number }; milestones?: Milestones }
 
 // Memoized milestone pill component to prevent unnecessary re-renders
 const MilestonePill = memo(({ stat, href }: { stat: InHuntStat; href: string }) => (
@@ -44,6 +44,16 @@ export default function WatchlistPage() {
   const [refreshingAll, setRefreshingAll] = useState(false);
   const [collapsed, setCollapsed] = useState<{ [id: string]: boolean }>({});
   const [collapsedReady, setCollapsedReady] = useState(false);
+  
+  // Check if forcePrimary is in URL (bypasses Turso replica lag)
+  const [forcePrimary, setForcePrimary] = useState(false);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      setForcePrimary(params.get('forcePrimary') === 'true');
+    }
+  }, []);
+  
   const [includePlayoffs, setIncludePlayoffs] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
     const raw = localStorage.getItem('watchlist:includePlayoffs');
@@ -107,8 +117,8 @@ export default function WatchlistPage() {
 
   // Optimized cache functions with better performance
   const cacheKey = useCallback((playerId: string) => 
-    `milestones:v4:${playerId}:pl${includePlayoffs ? '1' : '0'}:ac${ageCount}`, 
-    [includePlayoffs, ageCount]
+    `milestones:v4:${playerId}:pl${includePlayoffs ? '1' : '0'}:ac${ageCount}${forcePrimary ? ':fp' : ''}`, 
+    [includePlayoffs, ageCount, forcePrimary]
   );
   
   const readCache = useCallback((playerId: string): Milestones => {
@@ -647,6 +657,13 @@ export default function WatchlistPage() {
 
   const compute = useCallback(async (playerId: string) => {
     console.log(`[Watchlist] Loading milestones for player ${playerId}`);
+    
+    // If forcePrimary is active, clear the cache to force fresh fetch
+    if (forcePrimary) {
+      console.log(`[Watchlist] Clearing cache for player ${playerId} (forcePrimary mode)`);
+      optimizedCache.delete(cacheKey(playerId));
+    }
+    
     setLoading(s => ({ ...s, [playerId]: true }));
     
     // Add timeout to prevent infinite loading
@@ -660,7 +677,13 @@ export default function WatchlistPage() {
     
     try {
       // Pass a view hint so API returns curated presets for Watchlist
-      const params = new URLSearchParams({ view: 'watchlist', playerId, includePlayoffs: includePlayoffs ? '1' : '0', ageCount: String(ageCount) });
+      const params = new URLSearchParams({ 
+        view: 'watchlist', 
+        playerId, 
+        includePlayoffs: includePlayoffs ? '1' : '0', 
+        ageCount: String(ageCount),
+        ...(forcePrimary && { forcePrimary: 'true' }) // Force primary DB read if requested
+      });
       console.log(`[Watchlist] Fetching milestones from: /api/milestones?${params.toString()}`);
       
       const res = await fetch('/api/milestones?' + params.toString(), {
@@ -702,7 +725,7 @@ export default function WatchlistPage() {
     } finally {
       setLoading(s => ({ ...s, [playerId]: false }));
     }
-  }, [includePlayoffs, ageCount, writeCache]);
+  }, [includePlayoffs, ageCount, writeCache, forcePrimary, cacheKey]);
 
   // Hydrate milestones from cache only (no auto-fetching for performance)
   // Memoized hydration to avoid recalculating on every render
@@ -730,9 +753,9 @@ export default function WatchlistPage() {
     const toFetch = hydrated.filter(i => !i.milestones && !loading[i.playerId]).map(i => i.playerId);
     if (toFetch.length > 0) {
       console.log(`[Watchlist] Auto-loading milestones for ${toFetch.length} players:`, toFetch);
-      // Stagger the requests to avoid overwhelming the API
+      // Faster stagger for better perceived loading (50ms instead of 200ms)
       toFetch.forEach((pid, index) => { 
-        setTimeout(() => compute(pid), 200 * index); // Staggered delays: 0ms, 200ms, 400ms, etc.
+        setTimeout(() => compute(pid), 50 * index); // Reduced from 200ms to 50ms
       });
     }
   }, [items, hydratedItems]);
@@ -789,6 +812,8 @@ export default function WatchlistPage() {
       '20+pts 10+ast': '20+10ast',
       '30+pts 10+ast': '30+10ast',
       '40+pts 10+ast': '40+10ast',
+      'Double-doubles': 'dd',
+      'Triple-doubles': 'td',
     };
     const preset = labelToPreset[label];
     if (preset) {
@@ -868,6 +893,11 @@ export default function WatchlistPage() {
                   {i.player && getAge(i.player) && (
                     <span className="ml-2 text-xs text-gray-500">
                       {`Age:\u00A0`}{getAge(i.player)}
+                      {i.player.daysUntilNextBirthday !== undefined && (
+                        <span className="ml-1 text-gray-400">
+                          ({i.player.daysUntilNextBirthday} {i.player.daysUntilNextBirthday === 1 ? 'day' : 'days'} until {(getAge(i.player) as number) + 1})
+                        </span>
+                      )}
                     </span>
                   )}
                 </div>
@@ -934,13 +964,13 @@ export default function WatchlistPage() {
                   )}
                 </div>
               )}
-              {!collapsed[i.playerId] && !i.milestones && !loading[i.playerId] && (
+              {!collapsed[i.playerId] && !i.milestones && (
                 <div className="mt-2 text-sm text-blue-500 italic flex items-center">
                   <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Loading milestones...
+                  {loading[i.playerId] ? 'Loading milestones...' : 'Preparing to load milestones...'}
                 </div>
               )}
               {!collapsed[i.playerId] && i.milestones && hunts.length === 0 && !loading[i.playerId] && (

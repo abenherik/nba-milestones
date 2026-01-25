@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 
 // Configuration
-const PRODUCTION_URL = 'https://nba-milestones-20250822-123137-21b6egkyz-abenheriks-projects.vercel.app';
+const PRODUCTION_URL = 'https://nba-milestones-20250822-123137.vercel.app';
 const TEST_PLAYER = 'LeBron James'; // Well-known player that should exist
 const TEST_PLAYER_SEARCH = 'LeBron';
 const TIMEOUT_MS = 30000; // 30 second timeout for slow operations

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { openSqlite, ensureCoreSchema, dbAll, dbRun } from '@/lib/sqlite';
+import { openSqlite, ensureCoreSchemaOnce, dbAll, dbRun, closeDatabase } from '@/lib/sqlite';
 
 // Sample NBA players for empty database
 const samplePlayers = [
@@ -19,17 +19,10 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get('q')?.trim().toLowerCase() ?? '';
   const db = openSqlite();
-  await ensureCoreSchema(db);
+  await ensureCoreSchemaOnce(db);
 
-  // Check if database is empty and auto-seed
-  const playerCount = await dbAll<{ count: number }>(db, 'SELECT COUNT(*) as count FROM players');
-  if ((playerCount[0]?.count || 0) === 0) {
-    // Auto-populate with sample data
-    for (const player of samplePlayers) {
-      await dbRun(db, 'INSERT OR IGNORE INTO players (id, full_name, is_active) VALUES (?, ?, ?)', 
-        [player.id, player.full_name, player.is_active]);
-    }
-  }
+  // Skip auto-seed check on every request - database should already be populated
+  // Auto-seeding only happens on first run or empty database scenarios
 
   type Row = { id: string; full_name: string };
   let rows: Row[] = [];
@@ -40,6 +33,19 @@ export async function GET(req: NextRequest) {
   } else {
     rows = await dbAll<Row>(db, `SELECT id, full_name FROM players ORDER BY full_name LIMIT 50`);
   }
-  db.close();
-  return NextResponse.json({ players: rows });
+  
+  // If empty, do one-time auto-seed
+  if (rows.length === 0) {
+    const values = samplePlayers.map(() => '(?, ?, ?)').join(', ');
+    const params = samplePlayers.flatMap(p => [p.id, p.full_name, p.is_active]);
+    await dbRun(db, `INSERT OR IGNORE INTO players (id, full_name, is_active) VALUES ${values}`, params);
+    rows = await dbAll<Row>(db, `SELECT id, full_name FROM players ORDER BY full_name LIMIT 50`);
+  }
+  
+  await closeDatabase(db);
+  
+  const response = NextResponse.json({ players: rows });
+  // Cache player list (6 hours allows twice-daily checks)
+  response.headers.set('Cache-Control', 'public, max-age=21600, stale-while-revalidate=43200');
+  return response;
 }

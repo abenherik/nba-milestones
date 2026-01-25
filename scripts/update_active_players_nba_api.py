@@ -51,20 +51,21 @@ def calculate_age_at_game(birthdate: str, game_date: str) -> Optional[int]:
         return None
 
 
-def fetch_player_games(player_id: str, season: str) -> List[Dict]:
-    """Fetch game logs for a player using nba_api"""
+def fetch_player_games(player_id: str, season: str, timeout: int = 15) -> List[Dict]:
+    """Fetch game logs for a player using nba_api with shorter timeout"""
     try:
         print(f"  Fetching games for player {player_id}, season {season}...")
         
-        # Fetch game logs with rate limiting
+        # Fetch game logs with rate limiting and shorter timeout
         gamelog = playergamelog.PlayerGameLog(
             player_id=player_id,
             season=season,
-            season_type_all_star='Regular Season'
+            season_type_all_star='Regular Season',
+            timeout=timeout  # Reduce from 30s default to 15s
         )
         
         # Small delay to respect rate limits
-        time.sleep(0.6)
+        time.sleep(1.0)  # Increase delay between requests
         
         df = gamelog.get_data_frames()[0]
         
@@ -74,7 +75,11 @@ def fetch_player_games(player_id: str, season: str) -> List[Dict]:
         return games
         
     except Exception as e:
-        print(f"  ERROR fetching games: {e}")
+        error_msg = str(e)
+        if 'timeout' in error_msg.lower() or 'timed out' in error_msg.lower():
+            print(f"  ⏱️  TIMEOUT - NBA API too slow, skipping player")
+        else:
+            print(f"  ERROR fetching games: {e}")
         return []
 
 
@@ -177,6 +182,12 @@ def main():
     if not db_url or not auth_token:
         print("ERROR: TURSO_DATABASE_URL and TURSO_AUTH_TOKEN must be set")
         sys.exit(1)
+    
+    # Debug token format
+    print(f"DB URL length: {len(db_url)}")
+    print(f"Auth token length: {len(auth_token)}")
+    print(f"Token starts with: {auth_token[:20]}...")
+    print(f"Token has {auth_token.count('.')} dots")
     
     print("=" * 60)
     print("NBA Active Player Stats Update")

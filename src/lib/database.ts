@@ -7,6 +7,9 @@ export type SqliteDb = sqlite3.Database;
 export type LibSQLDb = LibSQLClient;
 export type DatabaseConnection = SqliteDb | LibSQLDb;
 
+// Reuse a single Turso client per process to avoid unnecessary reconnect overhead.
+let tursoClient: LibSQLClient | null = null;
+
 // Type guards
 function isLibSQLClient(db: DatabaseConnection): db is LibSQLDb {
   return 'execute' in db && typeof db.execute === 'function';
@@ -39,15 +42,18 @@ export function openDatabase(): DatabaseConnection {
     console.log('[Database] Primary read forcing expired, returning to normal');
   }
   
-  // Check if we should use Turso in production
-  if (process.env.NODE_ENV === 'production' && process.env.TURSO_DATABASE_URL) {
-    console.log(`[Database] Using Turso database${forcePrimaryReads ? ' (FORCE PRIMARY)' : ''}`);
-    return createClient({
-      url: process.env.TURSO_DATABASE_URL,
-      authToken: process.env.TURSO_AUTH_TOKEN,
-      // Force synchronous mode for primary reads (bypasses replica lag)
-      ...(forcePrimaryReads && { syncUrl: process.env.TURSO_DATABASE_URL })
-    });
+  // Check if we should use Turso (in production OR when explicitly configured with credentials)
+  const shouldUseTurso = process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN;
+  
+  if (shouldUseTurso) {
+    console.log(`[Database] Using Turso database${forcePrimaryReads ? ' (FORCE PRIMARY - note: may still hit replicas)' : ''}`);
+    if (!tursoClient) {
+      tursoClient = createClient({
+        url: process.env.TURSO_DATABASE_URL!,
+        authToken: process.env.TURSO_AUTH_TOKEN!,
+      });
+    }
+    return tursoClient;
   }
   
   // Fall back to local SQLite
@@ -102,6 +108,42 @@ export function dbRun(db: DatabaseConnection, sql: string, params: unknown[] = [
   }
 }
 
+export type DbExecResult = { rowsAffected: number };
+
+export async function dbExec(db: DatabaseConnection, sql: string, params: unknown[] = []): Promise<DbExecResult> {
+  if (isLibSQLClient(db)) {
+    const result: any = await db.execute({ sql, args: params });
+    return { rowsAffected: Number(result?.rowsAffected ?? 0) };
+  }
+
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function (this: sqlite3.RunResult, err) {
+      if (err) return reject(err);
+      resolve({ rowsAffected: Number(this.changes ?? 0) });
+    });
+  });
+}
+
+export async function dbBatch(db: DatabaseConnection, statements: Array<{ sql: string; params?: unknown[] }>): Promise<void> {
+  if (!statements.length) return;
+
+  if (isLibSQLClient(db)) {
+    if (process.env.DEBUG?.includes('db')) {
+      console.log(`[Database] libsql batch: ${statements.length} statements`);
+    }
+    await db.batch(
+      statements.map(s => ({ sql: s.sql, args: (s.params ?? []) as any[] })),
+      'deferred'
+    );
+    return;
+  }
+
+  // Local sqlite fallback: run sequentially.
+  for (const s of statements) {
+    await dbRun(db, s.sql, s.params ?? []);
+  }
+}
+
 export function dbAll<T = unknown>(db: DatabaseConnection, sql: string, params: unknown[] = []): Promise<T[]> {
   if (isLibSQLClient(db)) {
     return db.execute({ sql, args: params }).then(result => result.rows as T[]);
@@ -114,7 +156,9 @@ export function dbAll<T = unknown>(db: DatabaseConnection, sql: string, params: 
 
 export function closeDatabase(db: DatabaseConnection): Promise<void> {
   if (isLibSQLClient(db)) {
-    return db.close();
+    // LibSQL (Turso) client is reused across requests; do not close per-request.
+    // Closing it will break subsequent calls within the same process.
+    return Promise.resolve();
   } else {
     return new Promise((resolve) => {
       db.close(() => resolve());
@@ -122,115 +166,165 @@ export function closeDatabase(db: DatabaseConnection): Promise<void> {
   }
 }
 
+export async function closeTursoClient(): Promise<void> {
+  if (!tursoClient) return;
+  const clientToClose = tursoClient;
+  tursoClient = null;
+  await clientToClose.close();
+}
+
 // Legacy compatibility functions
 export const openSqlite = openDatabase;
 
 export async function ensureCoreSchema(db: DatabaseConnection) {
-  // Core tables (minimal) to support per-game stats
-  await dbRun(db, `CREATE TABLE IF NOT EXISTS players (
-    id TEXT PRIMARY KEY,
-    full_name TEXT NOT NULL,
-    is_active INTEGER,
-    birthdate TEXT
-  )`);
+  // Core tables (minimal) to support per-game stats.
+  // For Turso (libsql), use a single batch request to avoid rate limits.
+  const schemaStatements: Array<{ sql: string; params?: unknown[] }> = [
+    {
+      sql: `CREATE TABLE IF NOT EXISTS players (
+        id TEXT PRIMARY KEY,
+        full_name TEXT NOT NULL,
+        is_active INTEGER,
+        birthdate TEXT
+      )`,
+    },
+    {
+      sql: `CREATE TABLE IF NOT EXISTS games (
+        game_id TEXT PRIMARY KEY,
+        game_date TEXT NOT NULL
+      )`,
+    },
+    {
+      sql: `CREATE TABLE IF NOT EXISTS player_stats (
+        game_id TEXT NOT NULL,
+        player_id TEXT NOT NULL,
+        season TEXT,
+        season_type TEXT,
+        minutes TEXT,
+        points INTEGER DEFAULT 0,
+        rebounds INTEGER DEFAULT 0,
+        assists INTEGER DEFAULT 0,
+        blocks INTEGER DEFAULT 0,
+        steals INTEGER DEFAULT 0,
+        PRIMARY KEY (game_id, player_id),
+        FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE,
+        FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE
+      )`,
+    },
 
-  await dbRun(db, `CREATE TABLE IF NOT EXISTS games (
-    game_id TEXT PRIMARY KEY,
-    game_date TEXT NOT NULL
-  )`);
+    // Indexes
+    { sql: `CREATE INDEX IF NOT EXISTS idx_players_name ON players(full_name)` },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_players_active ON players(is_active)` },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_player_stats_player ON player_stats(player_id)` },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_player_stats_season ON player_stats(season, season_type)` },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_games_date ON games(game_date)` },
 
-  await dbRun(db, `CREATE TABLE IF NOT EXISTS player_stats (
-    game_id TEXT NOT NULL,
-    player_id TEXT NOT NULL,
-    season TEXT,
-    season_type TEXT,
-    minutes TEXT,
-    points INTEGER DEFAULT 0,
-    rebounds INTEGER DEFAULT 0,
-    assists INTEGER DEFAULT 0,
-    blocks INTEGER DEFAULT 0,
-    steals INTEGER DEFAULT 0,
-    PRIMARY KEY (game_id, player_id),
-    FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE,
-    FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE
-  )`);
+    // Materialized summary table
+    {
+      sql: `CREATE TABLE IF NOT EXISTS game_summary (
+        player_id TEXT NOT NULL,
+        player_name TEXT NOT NULL,
+        game_id TEXT NOT NULL,
+        game_date TEXT NOT NULL,
+        season TEXT,
+        season_type TEXT,
+        points INTEGER DEFAULT 0,
+        rebounds INTEGER DEFAULT 0,
+        assists INTEGER DEFAULT 0,
+        blocks INTEGER DEFAULT 0,
+        steals INTEGER DEFAULT 0,
+        age_at_game_years INTEGER,
+        PRIMARY KEY (game_id, player_id)
+      )`,
+    },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_summary_player ON game_summary(player_id)` },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_summary_season ON game_summary(season, season_type)` },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_summary_age ON game_summary(age_at_game_years)` },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_summary_player_season ON game_summary(player_id, season_type)` },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_summary_milestones ON game_summary(points, rebounds, assists, steals, blocks)` },
 
-  // Add indexes
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_players_name ON players(full_name)`);
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_players_active ON players(is_active)`);
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_player_stats_player ON player_stats(player_id)`);
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_player_stats_season ON player_stats(season, season_type)`);
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_games_date ON games(game_date)`);
+    // Season totals with override capability
+    {
+      sql: `CREATE TABLE IF NOT EXISTS season_totals_override (
+        player_id TEXT NOT NULL,
+        season TEXT NOT NULL,
+        season_type TEXT NOT NULL,
+        points INTEGER DEFAULT 0,
+        rebounds INTEGER DEFAULT 0,
+        assists INTEGER DEFAULT 0,
+        blocks INTEGER DEFAULT 0,
+        steals INTEGER DEFAULT 0,
+        games_played INTEGER DEFAULT 0,
+        updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+        PRIMARY KEY (player_id, season, season_type)
+      )`,
+    },
 
-  // Materialized summary table (one-stop shop)
-  await dbRun(db, `CREATE TABLE IF NOT EXISTS game_summary (
-    player_id TEXT NOT NULL,
-    player_name TEXT NOT NULL,
-    game_id TEXT NOT NULL,
-    game_date TEXT NOT NULL,
-    season TEXT,
-    season_type TEXT,
-    points INTEGER DEFAULT 0,
-    rebounds INTEGER DEFAULT 0,
-    assists INTEGER DEFAULT 0,
-    blocks INTEGER DEFAULT 0,
-    steals INTEGER DEFAULT 0,
-    age_at_game_years INTEGER,
-    PRIMARY KEY (game_id, player_id)
-  )`);
+    // Watchlist
+    {
+      sql: `CREATE TABLE IF NOT EXISTS watchlist (
+        player_id TEXT NOT NULL,
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        PRIMARY KEY (player_id),
+        FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE
+      )`,
+    },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_watchlist_created ON watchlist(created_at)` },
 
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_summary_player ON game_summary(player_id)`);
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_summary_season ON game_summary(season, season_type)`);
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_summary_age ON game_summary(age_at_game_years)`);
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_summary_player_season ON game_summary(player_id, season_type)`);
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_summary_milestones ON game_summary(points, rebounds, assists, steals, blocks)`);
+    // App metadata
+    {
+      sql: `CREATE TABLE IF NOT EXISTS app_meta (
+        key TEXT PRIMARY KEY,
+        value TEXT
+      )`,
+    },
 
-  // Season totals with override capability
-  await dbRun(db, `CREATE TABLE IF NOT EXISTS season_totals_override (
-    player_id TEXT NOT NULL,
-    season TEXT NOT NULL,
-    season_type TEXT NOT NULL,
-    points INTEGER DEFAULT 0,
-    rebounds INTEGER DEFAULT 0,
-    assists INTEGER DEFAULT 0,
-    blocks INTEGER DEFAULT 0,
-    steals INTEGER DEFAULT 0,
-    games_played INTEGER DEFAULT 0,
-    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
-    PRIMARY KEY (player_id, season, season_type)
-  )`);
+    // Precomputed slices
+    {
+      sql: `CREATE TABLE IF NOT EXISTS slices_top25 (
+        version TEXT NOT NULL,
+        slice_key TEXT NOT NULL,
+        season_group TEXT NOT NULL, -- 'RS' or 'ALL'
+        age INTEGER NOT NULL,
+        rank INTEGER NOT NULL,
+        player_id TEXT NOT NULL,
+        player_name TEXT NOT NULL,
+        value INTEGER NOT NULL,
+        updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+        PRIMARY KEY (version, slice_key, season_group, age, rank)
+      )`,
+    },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_slices_lookup ON slices_top25(version, slice_key, season_group, age)` },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_slices_player ON slices_top25(version, slice_key, season_group, age, player_id)` },
+    { sql: `CREATE INDEX IF NOT EXISTS idx_slices_v_s_a_rank ON slices_top25(version, season_group, slice_key, age, rank)` },
+  ];
 
-  // Watchlist functionality
-  await dbRun(db, `CREATE TABLE IF NOT EXISTS watchlist (
-    player_id TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    PRIMARY KEY (player_id),
-    FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE
-  )`);
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_watchlist_created ON watchlist(created_at)`);
+  await dbBatch(db, schemaStatements);
+}
 
-  // App metadata (for versioned publish, cache versioning, etc.)
-  await dbRun(db, `CREATE TABLE IF NOT EXISTS app_meta (
-    key TEXT PRIMARY KEY,
-    value TEXT
-  )`);
+const coreSchemaOnce = new Map<string, Promise<void>>();
 
-  // Precomputed Top-25 slices (versioned publish)
-  await dbRun(db, `CREATE TABLE IF NOT EXISTS slices_top25 (
-    version TEXT NOT NULL,
-    slice_key TEXT NOT NULL,
-    season_group TEXT NOT NULL, -- 'RS' or 'ALL'
-    age INTEGER NOT NULL,
-    rank INTEGER NOT NULL,
-    player_id TEXT NOT NULL,
-    player_name TEXT NOT NULL,
-    value INTEGER NOT NULL,
-    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
-    PRIMARY KEY (version, slice_key, season_group, age, rank)
-  )`);
+function coreSchemaKey(): string {
+  if (process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN) {
+    return `turso:${process.env.TURSO_DATABASE_URL}`;
+  }
+  const dbPath = process.env.SQLITE_DB_PATH || path.resolve(process.cwd(), 'data', 'app.sqlite');
+  return `sqlite:${dbPath}`;
+}
 
-  // Indexes for slices
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_slices_lookup ON slices_top25(version, slice_key, season_group, age)`);
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_slices_player ON slices_top25(version, slice_key, season_group, age, player_id)`);
-  await dbRun(db, `CREATE INDEX IF NOT EXISTS idx_slices_v_s_a_rank ON slices_top25(version, season_group, slice_key, age, rank)`);
+export function ensureCoreSchemaOnce(db: DatabaseConnection): Promise<void> {
+  const key = coreSchemaKey();
+  const existing = coreSchemaOnce.get(key);
+  if (existing) return existing;
+
+  if (process.env.DEBUG?.includes('db')) {
+    console.log(`[Database] ensureCoreSchemaOnce: running schema setup for ${key}`);
+  }
+
+  const p = ensureCoreSchema(db).catch(err => {
+    coreSchemaOnce.delete(key);
+    throw err;
+  });
+  coreSchemaOnce.set(key, p);
+  return p;
 }

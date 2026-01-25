@@ -1,4 +1,4 @@
-import { openSqlite, ensureCoreSchema, dbAll } from "../../lib/sqlite";
+import { openSqlite, ensureCoreSchemaOnce, dbAll, closeDatabase, type SqliteDb } from "../../lib/sqlite";
 
 type BaseQuery = { minGames?: number };
 export type MilestoneQuery = (
@@ -104,9 +104,10 @@ export function labelFor(q: MilestoneQuery): string {
   return `${base} games`;
 }
 
-export async function getMilestoneGamesBeforeAge(q: MilestoneQuery, age: number, includePlayoffs = false): Promise<MilestoneData> {
-  const db = openSqlite();
-  await ensureCoreSchema(db);
+export async function getMilestoneGamesBeforeAge(q: MilestoneQuery, age: number, includePlayoffs = false, db?: SqliteDb): Promise<MilestoneData> {
+  const ownsDb = !db;
+  const dbConn = db ?? openSqlite();
+  await ensureCoreSchemaOnce(dbConn);
 
   const playFilter = includePlayoffs
     ? `season_type IN ('Regular Season','Playoffs')`
@@ -127,7 +128,7 @@ export async function getMilestoneGamesBeforeAge(q: MilestoneQuery, age: number,
 
   type Row = { player_id: string; player_name: string; value: number; is_active: number | null; birthdate: string | null };
   const havingSql = (q.minGames && (q.type !== "doubleDouble" && q.type !== "tripleDouble" && q.type !== "fiveByFive")) ? `HAVING COUNT(DISTINCT s.game_id) >= ?` : ``;
-  const rows = await dbAll<Row>(db, `
+  const rows = await dbAll<Row>(dbConn, `
     SELECT s.player_id, s.player_name, COUNT(DISTINCT s.game_id) as value, p.is_active, p.birthdate
     FROM game_summary s
     JOIN players p ON p.id = s.player_id
@@ -137,7 +138,7 @@ export async function getMilestoneGamesBeforeAge(q: MilestoneQuery, age: number,
     ORDER BY value DESC, s.player_name ASC
     LIMIT 25
   `, havingSql ? [...params, q.minGames as number] : params);
-  db.close();
+  if (ownsDb) await closeDatabase(dbConn);
 
   const defBase = "Count of qualifying games on or before cutoff age. Regular Season by default; toggle to include Playoffs.";
   const defMin = q.minGames && (q.type !== "doubleDouble" && q.type !== "tripleDouble" && q.type !== "fiveByFive")

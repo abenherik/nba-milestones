@@ -4,7 +4,7 @@ Track NBA players and see how close they are to notable milestones.
 
 ## Live Production App 🚀
 
-**Production URL:** https://nba-milestones-20250822-123137-rhf7y4whw-abenheriks-projects.vercel.app
+**Production URL:** https://nba-milestones-20250822-123137.vercel.app
 
 The app is deployed on Vercel with Turso cloud database. Visit the live app to explore NBA milestones!
 
@@ -18,7 +18,7 @@ The app is deployed on Vercel with Turso cloud database. Visit the live app to e
 
 Only needed for development/debugging:
 
-1. **Prerequisites:** Node.js 18+, Turso CLI
+1. **Prerequisites:** Node .js 18+, Turso CLI
 
 2. **Install dependencies:**
 ```powershell

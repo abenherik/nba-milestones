@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const data = await getBeforeAgeSqlite('rebounds', age, includePlayoffs);
     if (!data) return NextResponse.json({ error: 'Leaderboard not found' }, { status: 404 });
 
-    return NextResponse.json(data, { headers: { 'Cache-Control': 'public, max-age=300' } });
+    return NextResponse.json(data, { headers: { 'Cache-Control': 'public, max-age=600, stale-while-revalidate=1800' } });
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Internal error';
     return NextResponse.json({ error: msg }, { status: 500 });
