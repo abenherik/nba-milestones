@@ -1,0 +1,57 @@
+{
+  // Avoid reopening multiple windows from last session; start clean.
+  "window.restoreWindows": "none",
+
+  // Reduce TypeScript server load/memory in this workspace.
+  "typescript.tsserver.maxTsServerMemory": 768,
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "typescript.tsserver.useSyntaxServer": "never",
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+  "typescript.suggest.autoImports": false,
+  "javascript.suggest.autoImports": false,
+
+  // Disable heavy diagnostics/extensions during editing (build still enforces when needed).
+  "eslint.enable": false,
+  "tailwindCSS.validate": false,
+
+  // Disable Git features in this workspace to stop background scanning.
+  "git.enabled": false,
+  "git.autofetch": false,
+
+  // Prevent npm extension from scanning and watching scripts.
+  "npm.autoDetect": "off",
+
+  // Limit file watcher load.
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.git/**": true,
+    "**/data/**": true,
+    "**/docs/**": true,
+    "**/legacy/**": true,
+    "**/public/**": true,
+    "**/scripts/**": true
+  },
+  // Also exclude from search to avoid ripgrep cost on large folders.
+  "search.exclude": {
+    "**/node_modules/**": true,
+    "**/.git/**": true,
+    "**/data/**": true,
+    "**/docs/**": true,
+    "**/legacy/**": true,
+    "**/public/**": true,
+    "**/scripts/**": true
+  },
+
+  // Keep the terminal lightweight.
+  "terminal.integrated.enablePersistentSessions": false,
+  "debug.javascript.autoAttachFilter": "disabled",
+
+  // Use fewer editors rendering heavy features.
+  "editor.minimap.enabled": false,
+  "editor.stickyScroll.enabled": false,
+  "workbench.editor.limit.enabled": true,
+  "workbench.editor.limit.value": 10,
+  "workbench.editor.limit.perEditorGroup": true,
+  "workbench.tree.indent": 12,
+  "telemetry.telemetryLevel": "off"
+}

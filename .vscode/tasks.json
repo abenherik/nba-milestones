@@ -1,0 +1,200 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Dev: Start",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"dev:lowmem"
+			],
+			"options": {
+				"env": {
+					"PORT": "3001"
+				}
+			},
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Dev: Show URL",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"dev:url"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Dev: Link (auto-start)",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"dev:link"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Production: Show URL",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"prod:url"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Dev: Wait + URL",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"npm run -s dev:wait"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Test: Install Vitest",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"i",
+				"-D",
+				"vitest"
+			]
+		},
+		{
+			"label": "Test: Run",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"test"
+			]
+		},
+		{
+			"label": "Report: Missing Seasons (All)",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"report:missing:all"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Report: Missing Seasons (All, fast)",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"report:missing:all:fast"
+			],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "Dev: Show LAN URL",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"dev:lan:url"
+			],
+			"isBackground": false,
+			"group": "build"
+		}
+	]
+}
+			"label": "Test: Run",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"test"
+			]
+		},
+		{
+			"label": "Test: Run",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"test"
+			]
+		},
+		{
+			"label": "Report: Missing Seasons (All)",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"report:missing:all"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Report: Missing Seasons (All, fast)",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"report:missing:all:fast"
+			],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "Dev: Link (auto-start)",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"dev:link"
+			],
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Dev: Show LAN URL",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"-s",
+				"dev:lan:url"
+			],
+			"isBackground": false,
+			"group": "build"
+		}
+	]
+}
