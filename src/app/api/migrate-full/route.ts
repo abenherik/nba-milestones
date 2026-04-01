@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       const status = [];
       for (const { tableName } of MIGRATION_TABLES) {
         try {
-          const result = await db.execute(`SELECT COUNT(*) as count FROM ${tableName}`);
+          const result = await (db as any).execute(`SELECT COUNT(*) as count FROM ${tableName}`);
           status.push({
             table: tableName,
             count: result.rows[0]?.count || 0
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       const results = [];
       for (const { tableName } of MIGRATION_TABLES) {
         try {
-          await db.execute(`DELETE FROM ${tableName}`);
+          await (db as any).execute(`DELETE FROM ${tableName}`);
           results.push({ table: tableName, cleared: true });
         } catch (error) {
           results.push({ 

@@ -38,7 +38,7 @@ export async function POST(request: Request) {
           continue;
         }
 
-        const result = await db.execute(statement);
+        const result = await (db as any).execute(statement);
         executed++;
         
         if (statement.toUpperCase().startsWith('INSERT')) {

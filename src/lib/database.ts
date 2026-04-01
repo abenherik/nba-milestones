@@ -102,7 +102,7 @@ export function openDatabase(): DatabaseConnection {
 // Unified query functions that work with both database types
 export function dbRun(db: DatabaseConnection, sql: string, params: unknown[] = []): Promise<void> {
   if (isLibSQLClient(db)) {
-    return db.execute({ sql, args: params }).then(() => void 0);
+    return db.execute({ sql, args: params as any[] }).then(() => void 0);
   } else {
     return new Promise((resolve, reject) => {
       db.run(sql, params, (err) => (err ? reject(err) : resolve()));
@@ -114,7 +114,7 @@ export type DbExecResult = { rowsAffected: number };
 
 export async function dbExec(db: DatabaseConnection, sql: string, params: unknown[] = []): Promise<DbExecResult> {
   if (isLibSQLClient(db)) {
-    const result: any = await db.execute({ sql, args: params });
+    const result: any = await db.execute({ sql, args: params as any[] });
     return { rowsAffected: Number(result?.rowsAffected ?? 0) };
   }
 
@@ -148,7 +148,7 @@ export async function dbBatch(db: DatabaseConnection, statements: Array<{ sql: s
 
 export function dbAll<T = unknown>(db: DatabaseConnection, sql: string, params: unknown[] = []): Promise<T[]> {
   if (isLibSQLClient(db)) {
-    return db.execute({ sql, args: params }).then(result => result.rows as T[]);
+    return db.execute({ sql, args: params as any[] }).then(result => result.rows as T[]);
   } else {
     return new Promise((resolve, reject) => {
       db.all(sql, params, (err, rows) => (err ? reject(err) : resolve(rows as T[])));

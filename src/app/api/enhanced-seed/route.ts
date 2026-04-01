@@ -32,12 +32,12 @@ export async function POST(request: Request) {
 
     // Clear existing data first
     try {
-      await db.execute('DELETE FROM game_summary');
-      await db.execute('DELETE FROM player_stats');
-      await db.execute('DELETE FROM season_totals_override');
-      await db.execute('DELETE FROM games');
-      await db.execute('DELETE FROM players');
-      await db.execute('DELETE FROM app_meta');
+      await (db as any).execute('DELETE FROM game_summary');
+      await (db as any).execute('DELETE FROM player_stats');
+      await (db as any).execute('DELETE FROM season_totals_override');
+      await (db as any).execute('DELETE FROM games');
+      await (db as any).execute('DELETE FROM players');
+      await (db as any).execute('DELETE FROM app_meta');
       console.log('🧹 Cleared existing data');
     } catch (error) {
       console.error('Warning: Could not clear all data:', error);
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     if (seedData.appMeta && Array.isArray(seedData.appMeta)) {
       for (const meta of seedData.appMeta) {
         try {
-          await db.execute(
+          await (db as any).execute(
             'INSERT INTO app_meta (key, value) VALUES (?, ?)',
             [meta.key, meta.value]
           );
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     if (seedData.players && Array.isArray(seedData.players)) {
       for (const player of seedData.players) {
         try {
-          await db.execute(
+          await (db as any).execute(
             'INSERT INTO players (id, full_name, is_active, birthdate) VALUES (?, ?, ?, ?)',
             [player.id, player.full_name, player.is_active, player.birthdate]
           );
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
     if (seedData.games && Array.isArray(seedData.games)) {
       for (const game of seedData.games) {
         try {
-          await db.execute(
+          await (db as any).execute(
             'INSERT INTO games (game_id, game_date) VALUES (?, ?)',
             [game.game_id, game.game_date]
           );
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
     if (seedData.playerStats && Array.isArray(seedData.playerStats)) {
       for (const stat of seedData.playerStats) {
         try {
-          await db.execute(`
+          await (db as any).execute(`
             INSERT INTO player_stats 
             (game_id, player_id, season, season_type, minutes, points, rebounds, assists, blocks, steals) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -111,7 +111,7 @@ export async function POST(request: Request) {
     if (seedData.gameSummary && Array.isArray(seedData.gameSummary)) {
       for (const summary of seedData.gameSummary) {
         try {
-          await db.execute(`
+          await (db as any).execute(`
             INSERT INTO game_summary 
             (player_id, player_name, game_id, game_date, season, season_type, 
              points, rebounds, assists, blocks, steals, age_at_game_years) 
@@ -132,7 +132,7 @@ export async function POST(request: Request) {
     if (seedData.seasonOverrides && Array.isArray(seedData.seasonOverrides)) {
       for (const override of seedData.seasonOverrides) {
         try {
-          await db.execute(`
+          await (db as any).execute(`
             INSERT INTO season_totals_override 
             (player_id, season, season_type, points, rebounds, assists, blocks, steals) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)

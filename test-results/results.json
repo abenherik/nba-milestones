@@ -1,0 +1,1305 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\playwright.config.ts",
+    "rootDir": "C:/Users/Markus/Backups/NBA-Milestones_20250822_123137/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        null
+      ],
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/Markus/Backups/NBA-Milestones_20250822_123137/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/Markus/Backups/NBA-Milestones_20250822_123137/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/Markus/Backups/NBA-Milestones_20250822_123137/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/Markus/Backups/NBA-Milestones_20250822_123137/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/Markus/Backups/NBA-Milestones_20250822_123137/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Users/Markus/Backups/NBA-Milestones_20250822_123137/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/Markus/Backups/NBA-Milestones_20250822_123137/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "C:/Users/Markus/Backups/NBA-Milestones_20250822_123137/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/Markus/Backups/NBA-Milestones_20250822_123137/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "C:/Users/Markus/Backups/NBA-Milestones_20250822_123137/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.1",
+    "workers": 2,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "watchlist-flow.test.ts",
+      "file": "watchlist-flow.test.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Watchlist Flow E2E Tests",
+          "file": "watchlist-flow.test.ts",
+          "line": 19,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Complete watchlist flow with performance timing",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 33587,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 16,
+                            "line": 50
+                          },
+                          "message": "Error: page.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=Select Players')\u001b[22m\n\n\n\u001b[0m \u001b[90m 48 |\u001b[39m     \n \u001b[90m 49 |\u001b[39m     \u001b[90m// Step 1: Navigate to Select Players\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m'text=Select Players'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/select-players'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m     \n \u001b[90m 53 |\u001b[39m     \u001b[90m// Step 2: Search for player and time it\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:50:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🧪 Starting watchlist flow test...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:15:27.666Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-8cc2d0e74f8832c9ac94",
+              "file": "watchlist-flow.test.ts",
+              "line": 46,
+              "column": 7
+            },
+            {
+              "title": "Verify watchlist persistence across tabs",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 33683,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 17,
+                            "line": 156
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder=\"Search players...\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 154 |\u001b[39m     \n \u001b[90m 155 |\u001b[39m     \u001b[90m// In tab 1: Add player to watchlist\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 156 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"Search players...\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[33mTEST_PLAYER_SEARCH\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 157 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'ul[role=\"listbox\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 158 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mclick(\u001b[32m`text=${TEST_PLAYER}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 159 |\u001b[39m     \u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:156:17\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🔄 Testing cross-tab watchlist sync...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:15:27.631Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-chromium\\test-failed-3.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-chromium\\test-failed-2.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-chromium\\video-1.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-chromium\\video.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-chromium\\video-2.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-76c715c1cc1048cfa6ea",
+              "file": "watchlist-flow.test.ts",
+              "line": 144,
+              "column": 7
+            },
+            {
+              "title": "API error handling",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 36328,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 16,
+                            "line": 190
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder=\"Search players...\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 188 |\u001b[39m     \u001b[90m// Try to add player - should handle error gracefully\u001b[39m\n \u001b[90m 189 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m`${PRODUCTION_URL}/select-players`\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 190 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"Search players...\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[33mTEST_PLAYER_SEARCH\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 191 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'ul[role=\"listbox\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 192 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m`text=${TEST_PLAYER}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 193 |\u001b[39m     \u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:190:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "⚠️ Testing error handling...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:16:04.697Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-7b9ec17b136874bf55ae",
+              "file": "watchlist-flow.test.ts",
+              "line": 176,
+              "column": 7
+            },
+            {
+              "title": "Complete watchlist flow with performance timing",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 31163,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 16,
+                            "line": 50
+                          },
+                          "message": "Error: page.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=Select Players')\u001b[22m\n\n\n\u001b[0m \u001b[90m 48 |\u001b[39m     \n \u001b[90m 49 |\u001b[39m     \u001b[90m// Step 1: Navigate to Select Players\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m'text=Select Players'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/select-players'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m     \n \u001b[90m 53 |\u001b[39m     \u001b[90m// Step 2: Search for player and time it\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:50:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🧪 Starting watchlist flow test...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:16:04.692Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-firefox\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-firefox\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-7049d33043a8fccc96b1",
+              "file": "watchlist-flow.test.ts",
+              "line": 46,
+              "column": 7
+            },
+            {
+              "title": "Verify watchlist persistence across tabs",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 30767,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 17,
+                            "line": 156
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder=\"Search players...\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 154 |\u001b[39m     \n \u001b[90m 155 |\u001b[39m     \u001b[90m// In tab 1: Add player to watchlist\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 156 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"Search players...\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[33mTEST_PLAYER_SEARCH\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 157 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'ul[role=\"listbox\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 158 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mclick(\u001b[32m`text=${TEST_PLAYER}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 159 |\u001b[39m     \u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:156:17\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🔄 Testing cross-tab watchlist sync...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:16:44.054Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-firefox\\test-failed-2.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-firefox\\test-failed-3.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-firefox\\video.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-firefox\\video-1.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-firefox\\video-2.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-firefox\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-ea2e1584a39346e55fa1",
+              "file": "watchlist-flow.test.ts",
+              "line": 144,
+              "column": 7
+            },
+            {
+              "title": "API error handling",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30544,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 16,
+                            "line": 190
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder=\"Search players...\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 188 |\u001b[39m     \u001b[90m// Try to add player - should handle error gracefully\u001b[39m\n \u001b[90m 189 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m`${PRODUCTION_URL}/select-players`\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 190 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"Search players...\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[33mTEST_PLAYER_SEARCH\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 191 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'ul[role=\"listbox\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 192 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m`text=${TEST_PLAYER}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 193 |\u001b[39m     \u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:190:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "⚠️ Testing error handling...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:16:44.221Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-firefox\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-firefox\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-15c7f558f1ec62c98d1b",
+              "file": "watchlist-flow.test.ts",
+              "line": 176,
+              "column": 7
+            },
+            {
+              "title": "Complete watchlist flow with performance timing",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 30993,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 16,
+                            "line": 50
+                          },
+                          "message": "Error: page.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=Select Players')\u001b[22m\n\n\n\u001b[0m \u001b[90m 48 |\u001b[39m     \n \u001b[90m 49 |\u001b[39m     \u001b[90m// Step 1: Navigate to Select Players\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m'text=Select Players'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/select-players'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m     \n \u001b[90m 53 |\u001b[39m     \u001b[90m// Step 2: Search for player and time it\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:50:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🧪 Starting watchlist flow test...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:17:20.447Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-webkit\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-webkit\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-3fbd7cf3ca5b60f44005",
+              "file": "watchlist-flow.test.ts",
+              "line": 46,
+              "column": 7
+            },
+            {
+              "title": "Verify watchlist persistence across tabs",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 32024,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 17,
+                            "line": 156
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder=\"Search players...\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 154 |\u001b[39m     \n \u001b[90m 155 |\u001b[39m     \u001b[90m// In tab 1: Add player to watchlist\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 156 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"Search players...\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[33mTEST_PLAYER_SEARCH\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 157 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'ul[role=\"listbox\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 158 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mclick(\u001b[32m`text=${TEST_PLAYER}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 159 |\u001b[39m     \u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:156:17\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🔄 Testing cross-tab watchlist sync...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:17:21.768Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-webkit\\test-failed-2.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-webkit\\test-failed-3.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-webkit\\video.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-webkit\\video-1.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-webkit\\video-2.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-webkit\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-979dffc247feb31991f4",
+              "file": "watchlist-flow.test.ts",
+              "line": 144,
+              "column": 7
+            },
+            {
+              "title": "API error handling",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 30615,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 16,
+                            "line": 190
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder=\"Search players...\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 188 |\u001b[39m     \u001b[90m// Try to add player - should handle error gracefully\u001b[39m\n \u001b[90m 189 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m`${PRODUCTION_URL}/select-players`\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 190 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"Search players...\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[33mTEST_PLAYER_SEARCH\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 191 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'ul[role=\"listbox\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 192 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m`text=${TEST_PLAYER}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 193 |\u001b[39m     \u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:190:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "⚠️ Testing error handling...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:17:56.085Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-webkit\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-webkit\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-9e64e725f234a8178042",
+              "file": "watchlist-flow.test.ts",
+              "line": 176,
+              "column": 7
+            },
+            {
+              "title": "Complete watchlist flow with performance timing",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 34961,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 16,
+                            "line": 50
+                          },
+                          "message": "Error: page.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=Select Players')\u001b[22m\n\n\n\u001b[0m \u001b[90m 48 |\u001b[39m     \n \u001b[90m 49 |\u001b[39m     \u001b[90m// Step 1: Navigate to Select Players\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m'text=Select Players'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/select-players'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m     \n \u001b[90m 53 |\u001b[39m     \u001b[90m// Step 2: Search for player and time it\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:50:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🧪 Starting watchlist flow test...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:17:56.926Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-Mobile-Chrome\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-48a4e476bc9bf9fd925b",
+              "file": "watchlist-flow.test.ts",
+              "line": 46,
+              "column": 7
+            },
+            {
+              "title": "Verify watchlist persistence across tabs",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 35357,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 17,
+                            "line": 156
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder=\"Search players...\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 154 |\u001b[39m     \n \u001b[90m 155 |\u001b[39m     \u001b[90m// In tab 1: Add player to watchlist\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 156 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"Search players...\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[33mTEST_PLAYER_SEARCH\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 157 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'ul[role=\"listbox\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 158 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mclick(\u001b[32m`text=${TEST_PLAYER}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 159 |\u001b[39m     \u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:156:17\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🔄 Testing cross-tab watchlist sync...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:18:29.794Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Chrome\\test-failed-3.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Chrome\\test-failed-2.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Chrome\\video-1.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Chrome\\video.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Chrome\\video-2.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-462759ca7e0b7818c132",
+              "file": "watchlist-flow.test.ts",
+              "line": 144,
+              "column": 7
+            },
+            {
+              "title": "API error handling",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 32724,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 16,
+                            "line": 190
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder=\"Search players...\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 188 |\u001b[39m     \u001b[90m// Try to add player - should handle error gracefully\u001b[39m\n \u001b[90m 189 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m`${PRODUCTION_URL}/select-players`\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 190 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"Search players...\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[33mTEST_PLAYER_SEARCH\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 191 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'ul[role=\"listbox\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 192 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m`text=${TEST_PLAYER}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 193 |\u001b[39m     \u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:190:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "⚠️ Testing error handling...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:18:41.512Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-Mobile-Chrome\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-502601112de7c295f812",
+              "file": "watchlist-flow.test.ts",
+              "line": 176,
+              "column": 7
+            },
+            {
+              "title": "Complete watchlist flow with performance timing",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 31044,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 16,
+                            "line": 50
+                          },
+                          "message": "Error: page.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=Select Players')\u001b[22m\n\n\n\u001b[0m \u001b[90m 48 |\u001b[39m     \n \u001b[90m 49 |\u001b[39m     \u001b[90m// Step 1: Navigate to Select Players\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m'text=Select Players'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/select-players'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m     \n \u001b[90m 53 |\u001b[39m     \u001b[90m// Step 2: Search for player and time it\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:50:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🧪 Starting watchlist flow test...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:19:07.495Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-Mobile-Safari\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-Mobile-Safari\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-05971-low-with-performance-timing-Mobile-Safari\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-d39f20967f7808889dba",
+              "file": "watchlist-flow.test.ts",
+              "line": 46,
+              "column": 7
+            },
+            {
+              "title": "Verify watchlist persistence across tabs",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 31457,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 17,
+                            "line": 156
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder=\"Search players...\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 154 |\u001b[39m     \n \u001b[90m 155 |\u001b[39m     \u001b[90m// In tab 1: Add player to watchlist\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 156 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"Search players...\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[33mTEST_PLAYER_SEARCH\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 157 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'ul[role=\"listbox\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 158 |\u001b[39m     \u001b[36mawait\u001b[39m page1\u001b[33m.\u001b[39mclick(\u001b[32m`text=${TEST_PLAYER}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 159 |\u001b[39m     \u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:156:17\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🔄 Testing cross-tab watchlist sync...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:19:16.703Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Safari\\test-failed-1.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Safari\\test-failed-2.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Safari\\test-failed-3.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Safari\\video-1.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Safari\\video-2.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Safari\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-F-6610f-ist-persistence-across-tabs-Mobile-Safari\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-0d6f8b03ae68b7362c7c",
+              "file": "watchlist-flow.test.ts",
+              "line": 144,
+              "column": 7
+            },
+            {
+              "title": "API error handling",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 30539,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts",
+                            "column": 16,
+                            "line": 190
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder=\"Search players...\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 188 |\u001b[39m     \u001b[90m// Try to add player - should handle error gracefully\u001b[39m\n \u001b[90m 189 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m`${PRODUCTION_URL}/select-players`\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 190 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"Search players...\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[33mTEST_PLAYER_SEARCH\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 191 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'ul[role=\"listbox\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 192 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m`text=${TEST_PLAYER}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 193 |\u001b[39m     \u001b[0m\n\u001b[2m    at C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\tests\\e2e\\watchlist-flow.test.ts:190:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "⚠️ Testing error handling...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-28T16:19:43.049Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-Mobile-Safari\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-Mobile-Safari\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Markus\\Backups\\NBA-Milestones_20250822_123137\\test-results\\watchlist-flow-Watchlist-Flow-E2E-Tests-API-error-handling-Mobile-Safari\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fff6018b76d8d8df0a44-7b535044939e1c4ae1a6",
+              "file": "watchlist-flow.test.ts",
+              "line": 176,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-09-28T16:15:25.031Z",
+    "duration": 288955.973,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 15,
+    "flaky": 0
+  }
+}

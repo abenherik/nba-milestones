@@ -9,6 +9,7 @@ interface UpdateResult {
   gamesSkipped: number;
   errors: number;
   timedOut?: boolean;
+  batch?: any;
   playerDetails?: Array<{
     id: string;
     name: string;

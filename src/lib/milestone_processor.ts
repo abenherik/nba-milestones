@@ -149,8 +149,8 @@ const sql = `
       `;
       
       // Execute the batch query: handling Turso / raw execution
-      if (db.execute) {
-        await db.execute(sql);
+      if ('execute' in db) {
+        await (db as any).execute(sql);
       } else {
         // Fallback for custom dbRun wrapper
         await dbRun(db, sql);
