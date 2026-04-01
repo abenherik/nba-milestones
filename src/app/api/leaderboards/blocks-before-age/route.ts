@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getBeforeAgeSqlite } from '@/lib/leaderboards/beforeAgeSqlite';
-import { openSqlite, ensureCoreSchema, dbAll, dbRun } from '@/lib/sqlite';
+import { openSqlite, ensureCoreSchema, dbAll, dbRun, closeDatabase } from '@/lib/sqlite';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +28,7 @@ async function ensureSampleData() {
     }
   }
   
-  db.close();
+  await closeDatabase(db);
 }
 
 export async function GET(req: NextRequest) {

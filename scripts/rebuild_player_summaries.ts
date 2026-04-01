@@ -3,6 +3,9 @@ import { resolve } from 'path';
 config({ path: resolve(process.cwd(), '.env.local') });
 import { openDatabase, dbAll, closeDatabase } from '../src/lib/database.js';
 import { ALL_PRESETS, getMetricKey, processGame } from '../src/lib/milestone_processor.js';
+
+async function rebuildAll() {
+  const db = openDatabase();
   console.log('Fetching active players...');
   const players = await dbAll<{ id: string }>(db, `SELECT id FROM players WHERE is_active = 1`);
   

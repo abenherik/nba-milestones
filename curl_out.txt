@@ -1,0 +1,10 @@
+Invoke-RestMethod : An error occurred with your deployment
+FUNCTION_INVOCATION_TIMEOUT
+arn1::zn7cw-1775042542657-ae3b62750115
+At line:1 char:1
++ Invoke-RestMethod -Uri 'https://nba-milestones-20250822-123137.vercel ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.Net.HttpWebRequest:Ht 
+   tpWebRequest) [Invoke-RestMethod], WebException
+    + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerSh 
+   ell.Commands.InvokeRestMethodCommand

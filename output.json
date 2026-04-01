@@ -1,0 +1,52 @@
+{
+  "tables": [
+    {
+      "name": "players"
+    },
+    {
+      "name": "game_summary"
+    },
+    {
+      "name": "watchlist"
+    },
+    {
+      "name": "app_meta"
+    },
+    {
+      "name": "games"
+    },
+    {
+      "name": "player_stats"
+    },
+    {
+      "name": "season_totals_override"
+    },
+    {
+      "name": "slices_top25"
+    },
+    {
+      "name": "leaderboard_slices"
+    },
+    {
+      "name": "slices_meta"
+    },
+    {
+      "name": "player_milestone_summary"
+    }
+  ],
+  "pCount": [
+    {
+      "c": 5002
+    }
+  ],
+  "gCount": [
+    {
+      "c": 364806
+    }
+  ],
+  "sCount": [
+    {
+      "c": 344664
+    }
+  ]
+}

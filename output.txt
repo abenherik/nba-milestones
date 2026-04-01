@@ -1,0 +1,10 @@
+Database connection debug: {
+  NODE_ENV: 'development',
+  hasTursoUrl: true,
+  hasTursoToken: true,
+  tursoUrlPrefix: 'libsql://nba-milesto',
+  forcePrimaryReads: false,
+  forcePrimaryUntil: 0
+}
+[Database] Using Turso database
+WROTE TO output.json

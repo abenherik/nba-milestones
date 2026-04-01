@@ -1,4 +1,4 @@
-import { openSqlite, ensureCoreSchema, dbAll } from "../../lib/sqlite";
+import { openSqlite, ensureCoreSchema, dbAll, closeDatabase } from "../../lib/sqlite";
 
 export type Metric = 'points' | 'rebounds' | 'assists' | 'steals' | 'blocks';
 export type TotalsRow = { playerId: string; value: number; player: { id: string; full_name: string; active?: boolean | null } };
@@ -64,7 +64,7 @@ export async function getTotalsSqlite(metric: Metric, includePlayoffs = false, s
       LIMIT 25
     `);
   }
-  db.close();
+  await closeDatabase(db);
 
   return {
     metric,

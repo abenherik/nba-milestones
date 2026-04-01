@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getTotalsSqlite, Metric, Source } from '@/lib/leaderboards/totalsSqlite';
-import { openSqlite, ensureCoreSchema, dbAll, dbRun } from '@/lib/sqlite';
+import { openSqlite, ensureCoreSchema, dbAll, dbRun, closeDatabase } from '@/lib/sqlite';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,7 +27,7 @@ async function ensureTotalsData() {
     }
   }
   
-  db.close();
+  await closeDatabase(db);
 }
 
 export async function GET(req: NextRequest) {
