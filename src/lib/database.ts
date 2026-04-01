@@ -46,14 +46,25 @@ export function openDatabase(): DatabaseConnection {
   const shouldUseTurso = process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN;
   
   if (shouldUseTurso) {
+    let url = process.env.TURSO_DATABASE_URL!;
+    // Vercel serverless works best with https:// RPC instead of libsql:// websockets
+    if (process.env.VERCEL && url.startsWith('libsql://')) {
+      url = url.replace('libsql://', 'https://');
+    }
+    
     console.log(`[Database] Using Turso database${forcePrimaryReads ? ' (FORCE PRIMARY - note: may still hit replicas)' : ''}`);
     if (!tursoClient) {
       tursoClient = createClient({
-        url: process.env.TURSO_DATABASE_URL!,
+        url: url,
         authToken: process.env.TURSO_AUTH_TOKEN!,
       });
     }
     return tursoClient;
+  }
+  
+  // If on Vercel but missing Turso credentials, do NOT hang by hitting local sqlite!
+  if (process.env.VERCEL && !shouldUseTurso) {
+    throw new Error("Cannot use local SQLite on Vercel. Missing TURSO_DATABASE_URL or TURSO_AUTH_TOKEN.");
   }
   
   // Fall back to local SQLite
