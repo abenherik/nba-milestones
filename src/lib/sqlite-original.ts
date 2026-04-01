@@ -8,8 +8,10 @@ export function openSqlite(dbPath?: string): SqliteDb {
   const candidate = dbPath
     || process.env.SQLITE_DB_PATH
     || path.resolve(process.cwd(), 'data', 'app.sqlite');
-  // Ensure parent dir exists
-  fs.mkdirSync(path.dirname(candidate), { recursive: true });
+  // Ensure parent dir exists only if not on Vercel
+  if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    fs.mkdirSync(path.dirname(candidate), { recursive: true });
+  }
   const db = new sqlite3.Database(candidate);
   // Set pragmas for optimal performance
   db.serialize(() => {

@@ -59,7 +59,9 @@ export function openDatabase(): DatabaseConnection {
   // Fall back to local SQLite
   console.log('Using local SQLite (fallback)');
   const dbPath = process.env.SQLITE_DB_PATH || path.resolve(process.cwd(), 'data', 'app.sqlite');
-  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  }
   
   const db = new sqlite3.Database(dbPath);
   
