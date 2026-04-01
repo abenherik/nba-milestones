@@ -10,6 +10,7 @@ config({ path: resolve(process.cwd(), '.env.local') });
 
 import { openDatabase, dbAll, dbRun, dbBatch, closeDatabase } from '../src/lib/database.js';
 import { fetchPlayerGameLog, getCurrentSeason, calculateAgeAtGame } from '../src/lib/nba-api.js';
+import { incrementPlayerMilestones } from '../src/lib/milestone_processor.js';
 
 interface Player {
   id: string;
@@ -105,6 +106,16 @@ async function updatePlayers() {
               game.STL ?? 0,
               ageAtGame,
             ],
+            // keep the mapped data for delta processing
+            dataForDelta: {
+              season_type: 'Regular Season',
+              points: game.PTS ?? 0,
+              rebounds: game.REB ?? 0,
+              assists: game.AST ?? 0,
+              blocks: game.BLK ?? 0,
+              steals: game.STL ?? 0,
+              age_at_game_years: ageAtGame,
+            }
           };
         });
 
@@ -113,17 +124,43 @@ async function updatePlayers() {
 
         if (statements.length) {
           try {
-            await dbBatch(db, statements);
+            // we map to just dbBatch input payload: { sql, params } to prevent database errors 
+            // since dataForDelta is not part of the standard batch record
+            await dbBatch(db, statements.map(s => ({ sql: s.sql, params: s.params })));
             addedForPlayer = statements.length;
+            
+            // Process the delta for milestones immediately!
+            try {
+               await incrementPlayerMilestones(
+                 db, 
+                 player.id, 
+                 statements.map(s => s.dataForDelta)
+               );
+            } catch (deltaErr) {
+               console.error(`  Failed to apply milestones delta:`, deltaErr);
+            }
           } catch (err) {
             console.error(`  Batch insert failed; falling back to sequential inserts`, err);
+            const successfulGames = [];
             for (const s of statements) {
               try {
                 await dbRun(db, s.sql, s.params ?? []);
                 addedForPlayer++;
+                successfulGames.push(s.dataForDelta);
               } catch (e) {
                 errorsForPlayer++;
               }
+            }
+            if (successfulGames.length > 0) {
+               try {
+                 await incrementPlayerMilestones(
+                   db,
+                   player.id,
+                   successfulGames
+                 );
+               } catch (deltaErr) {
+                 console.error(`  Failed to apply sequential milestones delta:`, deltaErr);
+               }
             }
           }
         }

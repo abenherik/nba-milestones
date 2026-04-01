@@ -146,29 +146,21 @@ export async function GET(req: NextRequest) {
         const approx = Number(maxAgeRows[0]?.maxAge ?? 0);
         if (!isNaN(approx) && approx > 0) currentAge = approx;
       }
-      // Career totals using same DB
-      async function getCareerTotalsWithDb(dbLocal: DatabaseConnection, pid: string) {
-        type Row = { points: number | null; rebounds: number | null; assists: number | null; gamesPlayed: number | null };
-        const rows = await dbAll<Row>(dbLocal, `
-          SELECT
-            SUM(points) AS points,
-            SUM(rebounds) AS rebounds,
-            SUM(assists) AS assists,
-            COUNT(*) AS gamesPlayed
-          FROM game_summary
-          WHERE player_id = ?
-        `, [pid]);
-        const r = rows[0] || { points: 0, rebounds: 0, assists: 0, gamesPlayed: 0 };
-    return {
-      points: Number(r.points || 0),
-      rebounds: Number(r.rebounds || 0),
-      assists: Number(r.assists || 0),
-      threesMade: 0,
-      gamesPlayed: Number(r.gamesPlayed || 0),
-    };
-  }
-  const totals = await getCareerTotalsWithDb(db, playerId);
-  const distances = {
+      // Career totals using fast materialized view
+      async function getCareerTotalsWithDb(dbLocal: DatabaseConnection, pid: string, isAll: boolean) {
+        const rows = await dbAll<{ metric_type: string; total_count: number }>(dbLocal, `SELECT metric_type, total_count FROM player_milestone_summary WHERE player_id = ? AND age_cutoff = 99 AND season_type = ?`, [pid, isAll ? 'ALL' : 'RS']);
+        const r: Record<string, number> = {};
+        for (const row of rows) r[row.metric_type] = row.total_count;
+        return {
+          points: Number(r['total_points'] || 0),
+          rebounds: Number(r['total_rebounds'] || 0),
+          assists: Number(r['total_assists'] || 0),
+          threesMade: 0,
+          gamesPlayed: Number(r['total_gamesPlayed'] || 0)
+        };
+      }
+      const totals = await getCareerTotalsWithDb(db, playerId, includePlayoffsParam === '1' || includePlayoffsParam === 'true');
+    const distances = {
     toTop10: {
       points: distanceToTop10(totals.points, ALL_TIME_TOP10.points),
       rebounds: distanceToTop10(totals.rebounds, ALL_TIME_TOP10.rebounds),
@@ -183,11 +175,11 @@ export async function GET(req: NextRequest) {
   // --- Milestone leaderboards ---
   // Define metrics and ages to check
   const metrics: Metric[] = ['points', 'rebounds', 'assists', 'steals', 'blocks'];
-  // Build ages dynamically: for known age, check next N birthdays (cap at 40). Fallback to youth window.
-  const defaultAges = [21, 22, 23, 24, 25];
-  const nAhead = Math.max(1, Math.min(10, Number(ageCountParam ?? 5)));
-  const ages = currentAge != null
-    ? Array.from({ length: nAhead }, (_, i) => currentAge + 1 + i).filter(a => a <= 40)
+    // Build ages dynamically: for known age, check next N birthdays (cap at 45). Fallback to youth window.
+    const defaultAges = [21, 22, 23, 24, 25];
+    const nAhead = Math.max(1, Math.min(10, Number(ageCountParam ?? 5)));
+    const ages = currentAge != null
+      ? Array.from({ length: nAhead }, (_, i) => currentAge + 1 + i).filter(a => a <= 45)
     : defaultAges;
   const includePlayoffs = includePlayoffsParam === '1' || includePlayoffsParam === 'true';
   const seasonGroup: SeasonGroup = includePlayoffs ? 'ALL' : 'RS';

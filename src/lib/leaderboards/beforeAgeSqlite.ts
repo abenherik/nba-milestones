@@ -27,22 +27,18 @@ export async function getBeforeAgeSqlite(metric: Metric, age: number, includePla
   const ownsDb = !db;
   const dbConn = db ?? openSqlite();
   await ensureCoreSchemaOnce(dbConn);
-  const col = metricColumn(metric);
-  const playFilter = includePlayoffs
-    ? `season_type IN ('Regular Season','Playoffs')`
-    : `season_type = 'Regular Season'`;
+  const seasonType = includePlayoffs ? 'ALL' : 'RS';
+  const metricType = 'total_' + metric;
 
   type Row = { player_id: string; full_name: string; birthday: string | null; is_active: number | null; value: number };
   const rows = await dbAll<Row>(dbConn, `
-    SELECT s.player_id, p.full_name, p.birthdate as birthday, p.is_active, SUM(s.${col}) as value
-    FROM game_summary s
-    JOIN players p ON p.id = s.player_id
-  WHERE s.age_at_game_years IS NOT NULL AND s.age_at_game_years < ? AND ${playFilter}
-    GROUP BY s.player_id, p.full_name, p.birthdate, p.is_active
-    HAVING SUM(s.${col}) > 0
-    ORDER BY value DESC, p.full_name ASC
+    SELECT ps.player_id, p.full_name, p.birthdate as birthday, p.is_active, ps.total_count as value
+    FROM player_milestone_summary ps
+    JOIN players p ON p.id = ps.player_id
+    WHERE ps.age_cutoff = ? AND ps.season_type = ? AND ps.metric_type = ?
+    ORDER BY ps.total_count DESC, p.full_name ASC
     LIMIT 25
-  `, [age]);
+  `, [age, seasonType, metricType]);
   if (ownsDb) await closeDatabase(dbConn);
 
   return {

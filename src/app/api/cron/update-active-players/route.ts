@@ -8,6 +8,7 @@ import {
   type SeasonType,
   type NBAGameLog
 } from '@/lib/nba-api';
+import { incrementPlayerMilestones } from '@/lib/milestone_processor';
 
 export const dynamic = 'force-dynamic';
 // maxDuration removed - causes build issues on Vercel Hobby plan
@@ -95,22 +96,55 @@ async function updatePlayerGames(
           game.STL ?? 0,
           ageAtGame,
         ],
+        // keep the mapped data for delta processing
+        dataForDelta: {
+          season_type: 'Regular Season',
+          points: game.PTS ?? 0,
+          rebounds: game.REB ?? 0,
+          assists: game.AST ?? 0,
+          blocks: game.BLK ?? 0,
+          steals: game.STL ?? 0,
+          age_at_game_years: ageAtGame,
+        }
       };
     });
 
     if (statements.length) {
       try {
-        await dbBatch(db, statements);
+        await dbBatch(db, statements.map(s => ({ sql: s.sql, params: s.params })));
         added = statements.length;
+        
+        try {
+          await incrementPlayerMilestones(
+            db,
+            playerId,
+            statements.map(s => s.dataForDelta)
+          );
+        } catch (deltaErr) {
+          console.error(`[Cron] Failed to apply milestones delta for ${playerName}:`, deltaErr);
+        }
       } catch (err) {
         // Fallback: do sequential inserts to isolate errors.
         console.error(`[Cron] Batch insert failed for ${playerName} (${playerId}); falling back to sequential inserts`, err);
+        const successfulGames = [];
         for (const s of statements) {
           try {
             await dbRun(db, s.sql, s.params ?? []);
             added++;
+            successfulGames.push(s.dataForDelta);
           } catch (e) {
             errors++;
+          }
+        }
+        if (successfulGames.length > 0) {
+          try {
+            await incrementPlayerMilestones(
+              db,
+              playerId,
+              successfulGames
+            );
+          } catch (deltaErr) {
+            console.error(`[Cron] Failed to apply sequential milestones delta for ${playerName}:`, deltaErr);
           }
         }
       }

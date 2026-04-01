@@ -17,7 +17,7 @@ async function main() {
   const db = openDatabase();
   const nowVersion = await currentSlicesVersion(db);
   const nextVersion = `v${Date.now()}`;
-  const ages = (process.env.SLICE_AGES || '20,21,22,23,24,25,26,27,28,29,30').split(',').map(s=>Number(s.trim())).filter(n=>!isNaN(n));
+  const ages = (process.env.SLICE_AGES || '20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42').split(',').map(s=>Number(s.trim())).filter(n=>!isNaN(n));
   const includePlayoffs = process.env.SLICE_PLAYOFFS === '1';
   const seasonGroup = includePlayoffs ? 'ALL' : 'RS';
   
