@@ -9,7 +9,7 @@ export type MetricPreset =
   | { type: 'combo'; minPoints?: number; minRebounds?: number; minAssists?: number }
   | { type: 'doubleDouble' }
   | { type: 'tripleDouble' }
-  | { type: 'total'; stat: 'points' | 'rebounds' | 'assists' | 'gamesPlayed' };
+  | { type: 'total'; stat: 'points' | 'rebounds' | 'assists' | 'gamesPlayed' | 'blocks' | 'steals' };
 
 export const ALL_PRESETS: MetricPreset[] = [
   { type: 'points', minPoints: 20 },
@@ -17,6 +17,8 @@ export const ALL_PRESETS: MetricPreset[] = [
   { type: 'points', minPoints: 40 },
   { type: 'rebounds', minRebounds: 10 },
   { type: 'assists', minAssists: 10 },
+  { type: 'steals', minSteals: 5 },
+  { type: 'blocks', minBlocks: 5 },
   { type: 'combo', minPoints: 20, minRebounds: 10 },
   { type: 'combo', minPoints: 30, minRebounds: 10 },
   { type: 'combo', minPoints: 40, minRebounds: 10 },
@@ -30,6 +32,8 @@ export const ALL_PRESETS: MetricPreset[] = [
   { type: 'total', stat: 'points' },
   { type: 'total', stat: 'rebounds' },
   { type: 'total', stat: 'assists' },
+  { type: 'total', stat: 'blocks' },
+  { type: 'total', stat: 'steals' },
   { type: 'total', stat: 'gamesPlayed' }
 ];
 
