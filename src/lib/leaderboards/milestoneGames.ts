@@ -1,4 +1,5 @@
 import { openSqlite, ensureCoreSchemaOnce, dbAll, closeDatabase, type SqliteDb } from "../../lib/sqlite";
+import { getMetricKey } from "../../lib/milestone_processor";
 
 type BaseQuery = { minGames?: number };
 export type MilestoneQuery = (
@@ -109,35 +110,20 @@ export async function getMilestoneGamesBeforeAge(q: MilestoneQuery, age: number,
   const dbConn = db ?? openSqlite();
   await ensureCoreSchemaOnce(dbConn);
 
-  const playFilter = includePlayoffs
-    ? `season_type IN ('Regular Season','Playoffs')`
-    : `season_type = 'Regular Season'`;
-
-  const baseWhere = [`age_at_game_years IS NOT NULL`, `age_at_game_years < ?`, playFilter];
-  const baseParams: (number)[] = [age];
-
-  const cond = buildWhereClause(q);
-  // Debug: log the built conditions to diagnose inflated counts (guarded by env)
-  if (process.env.DEBUG_MILESTONES === '1') {
-    try {
-      console.log('[milestoneGames] q=', JSON.stringify(q), 'WHERE=', cond.sql, 'params=', cond.params, 'age<', age, 'playoffs=', includePlayoffs);
-    } catch {}
-  }
-  const where = [...baseWhere, cond.sql].join(" AND ");
-  const params = [...baseParams, ...cond.params];
+  const seasonType = includePlayoffs ? 'ALL' : 'RS';
+  const metricKey = getMetricKey(q as any);
 
   type Row = { player_id: string; player_name: string; value: number; is_active: number | null; birthdate: string | null };
-  const havingSql = (q.minGames && (q.type !== "doubleDouble" && q.type !== "tripleDouble" && q.type !== "fiveByFive")) ? `HAVING COUNT(DISTINCT s.game_id) >= ?` : ``;
+  const havingSql = (q.minGames && (q.type !== "doubleDouble" && q.type !== "tripleDouble" && q.type !== "fiveByFive")) ? `AND ps.total_count >= ?` : ``;
   const rows = await dbAll<Row>(dbConn, `
-    SELECT s.player_id, s.player_name, COUNT(DISTINCT s.game_id) as value, p.is_active, p.birthdate
-    FROM game_summary s
-    JOIN players p ON p.id = s.player_id
-    WHERE ${where}
-    GROUP BY s.player_id, s.player_name, p.is_active, p.birthdate
+    SELECT ps.player_id, p.full_name as player_name, ps.total_count as value, p.is_active, p.birthdate
+    FROM player_milestone_summary ps
+    JOIN players p ON p.id = ps.player_id
+    WHERE ps.age_cutoff = ? AND ps.season_type = ? AND ps.metric_type = ?
     ${havingSql}
-    ORDER BY value DESC, s.player_name ASC
+    ORDER BY ps.total_count DESC, p.full_name ASC
     LIMIT 25
-  `, havingSql ? [...params, q.minGames as number] : params);
+  `, havingSql ? [age, seasonType, metricKey, q.minGames as number] : [age, seasonType, metricKey]);
   if (ownsDb) await closeDatabase(dbConn);
 
   const defBase = "Count of qualifying games on or before cutoff age. Regular Season by default; toggle to include Playoffs.";
