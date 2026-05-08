@@ -121,7 +121,7 @@ export async function getMilestoneGamesBeforeAge(q: MilestoneQuery, age: number,
     JOIN players p ON p.id = ps.player_id
     WHERE ps.age_cutoff = ? AND ps.season_type = ? AND ps.metric_type = ?
     ${havingSql}
-    ORDER BY ps.total_count DESC, p.full_name ASC
+    ORDER BY ps.total_count DESC
     LIMIT 25
   `, havingSql ? [age, seasonType, metricKey, q.minGames as number] : [age, seasonType, metricKey]);
   if (ownsDb) await closeDatabase(dbConn);

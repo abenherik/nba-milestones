@@ -36,7 +36,7 @@ export async function getBeforeAgeSqlite(metric: Metric, age: number, includePla
     FROM player_milestone_summary ps
     JOIN players p ON p.id = ps.player_id
     WHERE ps.age_cutoff = ? AND ps.season_type = ? AND ps.metric_type = ?
-    ORDER BY ps.total_count DESC, p.full_name ASC
+    ORDER BY ps.total_count DESC
     LIMIT 25
   `, [age, seasonType, metricType]);
   if (ownsDb) await closeDatabase(dbConn);
